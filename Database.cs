@@ -8,6 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace App
 {
   public class DatabaseContext : DbContext{
+    public DbSet<Admin> Admins { get; set; }
     public DbSet<Patient> Patients { get; set; }
     public DbSet<Receptionist> Receptionists { get; set; }
     public DbSet<Doctor> Doctors { get; set; }
@@ -26,6 +27,13 @@ namespace App
     }
   }
 /////////////////////////////////////////////////////////////////////////////////////////////
+  public class Admin{
+      public int AdminId { get; set; }
+      [Required]
+      public string Name { get; set; }
+      [Required]
+      public string Lastname { get; set; }
+  }
 
   public class Patient{
       public int PatientId { get; set; }
