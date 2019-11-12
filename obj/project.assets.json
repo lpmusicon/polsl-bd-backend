@@ -1093,11 +1093,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Plechu\\Documents\\studia\\Bazy Danych\\projekt\\bd-ubiquitous-garbanzo-backend-master\\bd-backend.csproj",
+      "projectUniqueName": "C:\\Users\\Plechu\\Documents\\studia\\Bazy_Danych\\projekt\\bd-ubiquitous-garbanzo-backend\\bd-backend.csproj",
       "projectName": "bd-backend",
-      "projectPath": "C:\\Users\\Plechu\\Documents\\studia\\Bazy Danych\\projekt\\bd-ubiquitous-garbanzo-backend-master\\bd-backend.csproj",
+      "projectPath": "C:\\Users\\Plechu\\Documents\\studia\\Bazy_Danych\\projekt\\bd-ubiquitous-garbanzo-backend\\bd-backend.csproj",
       "packagesPath": "C:\\Users\\Plechu\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Plechu\\Documents\\studia\\Bazy Danych\\projekt\\bd-ubiquitous-garbanzo-backend-master\\obj\\",
+      "outputPath": "C:\\Users\\Plechu\\Documents\\studia\\Bazy_Danych\\projekt\\bd-ubiquitous-garbanzo-backend\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

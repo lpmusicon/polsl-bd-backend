@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace bd_backend.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20191106225335_initialProject")]
-    partial class initialProject
+    [Migration("20191111233303_BDv1")]
+    partial class BDv1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,16 +21,18 @@ namespace bd_backend.Migrations
             modelBuilder.Entity("App.Doctor", b =>
                 {
                     b.Property<int>("DoctorId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Lastname")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PWZNumber")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("DoctorId");
@@ -45,6 +47,7 @@ namespace bd_backend.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<char>("Type")
@@ -70,7 +73,7 @@ namespace bd_backend.Migrations
                     b.Property<DateTime>("ExaminationDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("ExaminationDictionaryId")
+                    b.Property<int>("ExaminationDictionaryId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("LaboratoryManagerId")
@@ -85,13 +88,15 @@ namespace bd_backend.Migrations
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("PatientVisitId")
+                    b.Property<int>("PatientVisitId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Result")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Status")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("LaboratoryExaminationId");
@@ -110,13 +115,14 @@ namespace bd_backend.Migrations
             modelBuilder.Entity("App.LaboratoryManager", b =>
                 {
                     b.Property<int>("LaboratoryManagerId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Lastname")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("LaboratoryManagerId");
@@ -127,13 +133,14 @@ namespace bd_backend.Migrations
             modelBuilder.Entity("App.LaboratoryWorker", b =>
                 {
                     b.Property<int>("LaboratoryWorkerId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Lastname")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("LaboratoryWorkerId");
@@ -148,12 +155,15 @@ namespace bd_backend.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Lastname")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PESEL")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("PatientId");
@@ -171,24 +181,27 @@ namespace bd_backend.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Diagnosis")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("DoctorId")
+                    b.Property<int>("DoctorId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("PatientId")
+                    b.Property<int>("PatientId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("ReceptionistId")
+                    b.Property<int>("ReceptionistId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("RegisterDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Status")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("PatientVisitId");
@@ -208,15 +221,21 @@ namespace bd_backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("ExaminationDictionaryId")
+                    b.Property<int>("ExaminationDictionaryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PatientVisitId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Result")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("PhysicalExaminationId");
 
                     b.HasIndex("ExaminationDictionaryId");
+
+                    b.HasIndex("PatientVisitId");
 
                     b.ToTable("PhysicalExaminations");
                 });
@@ -224,13 +243,14 @@ namespace bd_backend.Migrations
             modelBuilder.Entity("App.Receptionist", b =>
                 {
                     b.Property<int>("ReceptionistId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Lastname")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("ReceptionistId");
@@ -238,45 +258,89 @@ namespace bd_backend.Migrations
                     b.ToTable("Receptionists");
                 });
 
+            modelBuilder.Entity("App.User", b =>
+                {
+                    b.Property<int>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("DisabledTo")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Login")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("App.LaboratoryExamination", b =>
                 {
-                    b.HasOne("App.ExaminationDictionary", null)
+                    b.HasOne("App.ExaminationDictionary", "ExaminationDictionary")
                         .WithMany("LaboratoryExaminations")
-                        .HasForeignKey("ExaminationDictionaryId");
+                        .HasForeignKey("ExaminationDictionaryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("App.LaboratoryManager", null)
+                    b.HasOne("App.LaboratoryManager", "LaboratoryManager")
                         .WithMany("CheckedExaminations")
                         .HasForeignKey("LaboratoryManagerId");
 
-                    b.HasOne("App.LaboratoryWorker", null)
+                    b.HasOne("App.LaboratoryWorker", "LaboratoryWorker")
                         .WithMany("PerformedExaminations")
                         .HasForeignKey("LaboratoryWorkerId");
 
-                    b.HasOne("App.PatientVisit", null)
+                    b.HasOne("App.PatientVisit", "PatientVisit")
                         .WithMany("OrderedExaminations")
-                        .HasForeignKey("PatientVisitId");
+                        .HasForeignKey("PatientVisitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("App.PatientVisit", b =>
                 {
-                    b.HasOne("App.Doctor", null)
+                    b.HasOne("App.Doctor", "Doctor")
                         .WithMany("PerformedVisits")
-                        .HasForeignKey("DoctorId");
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("App.Patient", null)
+                    b.HasOne("App.Patient", "Patient")
                         .WithMany("PatientVisits")
-                        .HasForeignKey("PatientId");
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("App.Receptionist", null)
+                    b.HasOne("App.Receptionist", "Receptionist")
                         .WithMany("RegisteredVisits")
-                        .HasForeignKey("ReceptionistId");
+                        .HasForeignKey("ReceptionistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("App.PhysicalExamination", b =>
                 {
-                    b.HasOne("App.ExaminationDictionary", null)
+                    b.HasOne("App.ExaminationDictionary", "ExaminationDictionary")
                         .WithMany("PhysicalExaminations")
-                        .HasForeignKey("ExaminationDictionaryId");
+                        .HasForeignKey("ExaminationDictionaryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("App.PatientVisit", "PatientVisit")
+                        .WithMany()
+                        .HasForeignKey("PatientVisitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

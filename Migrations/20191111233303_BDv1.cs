@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace bd_backend.Migrations
 {
-    public partial class initialProject : Migration
+    public partial class BDv1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -11,11 +11,10 @@ namespace bd_backend.Migrations
                 name: "Doctors",
                 columns: table => new
                 {
-                    DoctorId = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(nullable: true),
-                    Lastname = table.Column<string>(nullable: true),
-                    PWZNumber = table.Column<string>(nullable: true)
+                    DoctorId = table.Column<int>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
+                    Lastname = table.Column<string>(nullable: false),
+                    PWZNumber = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -29,7 +28,7 @@ namespace bd_backend.Migrations
                     ExaminationDictionaryId = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Type = table.Column<char>(nullable: false),
-                    Name = table.Column<string>(nullable: true)
+                    Name = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -40,10 +39,9 @@ namespace bd_backend.Migrations
                 name: "LaboratoryManagers",
                 columns: table => new
                 {
-                    LaboratoryManagerId = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(nullable: true),
-                    Lastname = table.Column<string>(nullable: true)
+                    LaboratoryManagerId = table.Column<int>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
+                    Lastname = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -54,10 +52,9 @@ namespace bd_backend.Migrations
                 name: "LaboratoryWorkers",
                 columns: table => new
                 {
-                    LaboratoryWorkerId = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(nullable: true),
-                    Lastname = table.Column<string>(nullable: true)
+                    LaboratoryWorkerId = table.Column<int>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
+                    Lastname = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -70,9 +67,9 @@ namespace bd_backend.Migrations
                 {
                     PatientId = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(nullable: true),
-                    Lastname = table.Column<string>(nullable: true),
-                    PESEL = table.Column<string>(nullable: true)
+                    Name = table.Column<string>(nullable: false),
+                    Lastname = table.Column<string>(nullable: false),
+                    PESEL = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -83,10 +80,9 @@ namespace bd_backend.Migrations
                 name: "Receptionists",
                 columns: table => new
                 {
-                    ReceptionistId = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(nullable: true),
-                    Lastname = table.Column<string>(nullable: true)
+                    ReceptionistId = table.Column<int>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
+                    Lastname = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -94,23 +90,19 @@ namespace bd_backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PhysicalExaminations",
+                name: "Users",
                 columns: table => new
                 {
-                    PhysicalExaminationId = table.Column<int>(nullable: false)
+                    UserId = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Result = table.Column<string>(nullable: true),
-                    ExaminationDictionaryId = table.Column<int>(nullable: true)
+                    Login = table.Column<string>(nullable: false),
+                    Password = table.Column<string>(nullable: false),
+                    Role = table.Column<string>(nullable: false),
+                    DisabledTo = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PhysicalExaminations", x => x.PhysicalExaminationId);
-                    table.ForeignKey(
-                        name: "FK_PhysicalExaminations_ExaminationsDictionary_ExaminationDictionaryId",
-                        column: x => x.ExaminationDictionaryId,
-                        principalTable: "ExaminationsDictionary",
-                        principalColumn: "ExaminationDictionaryId",
-                        onDelete: ReferentialAction.Restrict);
+                    table.PrimaryKey("PK_Users", x => x.UserId);
                 });
 
             migrationBuilder.CreateTable(
@@ -119,14 +111,14 @@ namespace bd_backend.Migrations
                 {
                     PatientVisitId = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Description = table.Column<string>(nullable: true),
-                    Diagnosis = table.Column<string>(nullable: true),
-                    Status = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: false),
+                    Diagnosis = table.Column<string>(nullable: false),
+                    Status = table.Column<string>(nullable: false),
                     RegisterDate = table.Column<DateTime>(nullable: false),
                     CloseDate = table.Column<DateTime>(nullable: false),
-                    DoctorId = table.Column<int>(nullable: true),
-                    PatientId = table.Column<int>(nullable: true),
-                    ReceptionistId = table.Column<int>(nullable: true)
+                    ReceptionistId = table.Column<int>(nullable: false),
+                    PatientId = table.Column<int>(nullable: false),
+                    DoctorId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -136,19 +128,19 @@ namespace bd_backend.Migrations
                         column: x => x.DoctorId,
                         principalTable: "Doctors",
                         principalColumn: "DoctorId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_PatientVisits_Patients_PatientId",
                         column: x => x.PatientId,
                         principalTable: "Patients",
                         principalColumn: "PatientId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_PatientVisits_Receptionists_ReceptionistId",
                         column: x => x.ReceptionistId,
                         principalTable: "Receptionists",
                         principalColumn: "ReceptionistId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -157,17 +149,17 @@ namespace bd_backend.Migrations
                 {
                     LaboratoryExaminationId = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Result = table.Column<string>(nullable: true),
+                    Result = table.Column<string>(nullable: false),
                     DoctorComment = table.Column<string>(nullable: true),
                     OrderDate = table.Column<DateTime>(nullable: false),
                     ExaminationDate = table.Column<DateTime>(nullable: false),
                     MenagerComment = table.Column<string>(nullable: true),
                     ApprovalRejectionDate = table.Column<DateTime>(nullable: false),
-                    Status = table.Column<string>(nullable: true),
-                    ExaminationDictionaryId = table.Column<int>(nullable: true),
-                    LaboratoryManagerId = table.Column<int>(nullable: true),
+                    Status = table.Column<string>(nullable: false),
+                    PatientVisitId = table.Column<int>(nullable: false),
+                    ExaminationDictionaryId = table.Column<int>(nullable: false),
                     LaboratoryWorkerId = table.Column<int>(nullable: true),
-                    PatientVisitId = table.Column<int>(nullable: true)
+                    LaboratoryManagerId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -177,7 +169,7 @@ namespace bd_backend.Migrations
                         column: x => x.ExaminationDictionaryId,
                         principalTable: "ExaminationsDictionary",
                         principalColumn: "ExaminationDictionaryId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_LaboratoryExaminations_LaboratoryManagers_LaboratoryManagerId",
                         column: x => x.LaboratoryManagerId,
@@ -195,7 +187,34 @@ namespace bd_backend.Migrations
                         column: x => x.PatientVisitId,
                         principalTable: "PatientVisits",
                         principalColumn: "PatientVisitId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PhysicalExaminations",
+                columns: table => new
+                {
+                    PhysicalExaminationId = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Result = table.Column<string>(nullable: false),
+                    PatientVisitId = table.Column<int>(nullable: false),
+                    ExaminationDictionaryId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PhysicalExaminations", x => x.PhysicalExaminationId);
+                    table.ForeignKey(
+                        name: "FK_PhysicalExaminations_ExaminationsDictionary_ExaminationDictionaryId",
+                        column: x => x.ExaminationDictionaryId,
+                        principalTable: "ExaminationsDictionary",
+                        principalColumn: "ExaminationDictionaryId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PhysicalExaminations_PatientVisits_PatientVisitId",
+                        column: x => x.PatientVisitId,
+                        principalTable: "PatientVisits",
+                        principalColumn: "PatientVisitId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -237,6 +256,11 @@ namespace bd_backend.Migrations
                 name: "IX_PhysicalExaminations_ExaminationDictionaryId",
                 table: "PhysicalExaminations",
                 column: "ExaminationDictionaryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PhysicalExaminations_PatientVisitId",
+                table: "PhysicalExaminations",
+                column: "PatientVisitId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -248,16 +272,19 @@ namespace bd_backend.Migrations
                 name: "PhysicalExaminations");
 
             migrationBuilder.DropTable(
+                name: "Users");
+
+            migrationBuilder.DropTable(
                 name: "LaboratoryManagers");
 
             migrationBuilder.DropTable(
                 name: "LaboratoryWorkers");
 
             migrationBuilder.DropTable(
-                name: "PatientVisits");
+                name: "ExaminationsDictionary");
 
             migrationBuilder.DropTable(
-                name: "ExaminationsDictionary");
+                name: "PatientVisits");
 
             migrationBuilder.DropTable(
                 name: "Doctors");
