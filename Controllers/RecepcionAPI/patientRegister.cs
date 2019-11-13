@@ -11,6 +11,14 @@ using System.Text.Json.Serialization;
 namespace bd_backend.Controllers{
     [ApiController]
     [Route("api/recepcion/patientregister")]
+    /*
+    {
+    "Name": "",
+    "Lastname": "",
+    "PESEL": ""
+    }
+
+    */
     public class patientRegisterController : ControllerBase{
         public IActionResult Post(Patient np){
             

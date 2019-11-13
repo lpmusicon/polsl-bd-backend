@@ -121,9 +121,8 @@ public class LaboratoryExamination{
     public string DoctorComment { get; set; }
     public DateTime OrderDate { get; set; } // data z godzina
     public DateTime? ExaminationDate { get; set; } // data z godzina
-    public string MenagerComment { get; set; }
+    public string ManagerComment { get; set; }
     public DateTime? ApprovalRejectionDate { get; set; } // data z godzina
-    [Required]
     public string Status { get; set; }
 
     public int PatientVisitId{ get; set; }
@@ -141,7 +140,6 @@ public class PatientVisit{
   public int PatientVisitId { get; set; }
   public string Description { get; set; }
   public string Diagnosis { get; set; }
-  [Required]
   public string Status { get; set; }
   public DateTime RegisterDate { get; set; }
   public DateTime? CloseDate { get; set; } // data zamkniecia wizyty

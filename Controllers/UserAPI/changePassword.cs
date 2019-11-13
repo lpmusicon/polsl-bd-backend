@@ -15,6 +15,12 @@ namespace bd_backend.Controllers{
     };
     [ApiController]
     [Route("api/user/changepassword")]
+    /*
+    {
+	"Login": "",
+	"newPassword": ""
+    }
+    */
     public class changePasswordController : ControllerBase{
         public IActionResult Post(ChangePassword np){
             

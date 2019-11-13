@@ -3,14 +3,16 @@ using System;
 using App;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace bd_backend.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20191113165304_DBClinic")]
+    partial class DBClinic
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -99,7 +101,7 @@ namespace bd_backend.Migrations
                     b.Property<int?>("LaboratoryWorkerId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("ManagerComment")
+                    b.Property<string>("MenagerComment")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("OrderDate")

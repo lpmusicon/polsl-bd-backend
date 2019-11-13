@@ -20,6 +20,17 @@ namespace bd_backend.Controllers{
     };
     [ApiController]
     [Route("api/user/register")]
+    /* DisabledTo nie trzeba wypelniac bedzie dzialac, PWZNumber potrzebny tylko do lekarza
+    {
+        "Login": "",
+        "Password": "",
+        "Role": "",
+        "DisabledTo": "",
+        "Name": "",
+        "Lastname": "",
+        "PWZNumber": ""
+    }
+    */
     public class userRegisterController : ControllerBase{
         public IActionResult Post(RegisterData nu){
             

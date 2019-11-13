@@ -9,23 +9,21 @@ using System.Text.Json;
 using System.Text.Json.Serialization; 
 
 namespace bd_backend.Controllers{
-    public class pvcancel{
-        public int PatientVisitId { get; set; }
-        public string Description { get; set; }
-    };
+
     [ApiController]
-    [Route("api/recepcion/patientvisitcancel")]
+    [Route("api/doctor/patientvisitcancel")]
     /* 
     {
     "patientVisitId": , 
     "description": ""
     }
     */
-    public class patientVisitCancelController : ControllerBase{
+    public class patientVisitDoctorCancelController : ControllerBase{
         public IActionResult Post(pvcancel cpv){
             using (var db = new DatabaseContext()){
-                
+                // anuluje tylko swoje wizyty? jesli tak, dopisz cos, teraz moze anulowac wszystko (Kononowicz mode)
                 var pv = db.PatientVisits.SingleOrDefault(x => x.PatientVisitId == cpv.PatientVisitId);
+                
                 if(pv != null){
                     pv.Status = "Canceled";
                     pv.CloseDate = DateTime.Now;

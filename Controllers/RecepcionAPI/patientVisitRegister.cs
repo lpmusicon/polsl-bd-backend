@@ -11,6 +11,13 @@ using System.Text.Json.Serialization;
 namespace bd_backend.Controllers{
     [ApiController]
     [Route("api/recepcion/patientvisitregister")]
+    /*
+    {
+    "PatientId": ,
+	"DoctorId": ,
+	"ReceptionistId": 
+    }
+    */
     public class patientVisitRegisterController : ControllerBase{
         public IActionResult Post(PatientVisit npv){
             
@@ -19,7 +26,9 @@ namespace bd_backend.Controllers{
                 var patientExist = db.Patients.SingleOrDefault(x => x.PatientId == npv.PatientId);
                 if(patientExist == null) return BadRequest();
 
-                if(npv.PatientVisitId == 0 && npv.Description == null && npv.Diagnosis == null && npv.CloseDate == null){
+                if(npv.PatientVisitId == 0 && npv.Description == null && npv.Diagnosis == null && npv.CloseDate == null && npv.Status == null){
+                    npv.Status = "Registered";
+                    npv.RegisterDate = DateTime.Now;
                     db.PatientVisits.Add(npv);
                     db.SaveChanges();
                     return StatusCode(201);

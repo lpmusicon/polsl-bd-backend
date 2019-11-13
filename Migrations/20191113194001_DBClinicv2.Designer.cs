@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace bd_backend.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20191112211501_DBClinic")]
-    partial class DBClinic
+    [Migration("20191113194001_DBClinicv2")]
+    partial class DBClinicv2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -101,7 +101,7 @@ namespace bd_backend.Migrations
                     b.Property<int?>("LaboratoryWorkerId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("MenagerComment")
+                    b.Property<string>("ManagerComment")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("OrderDate")
@@ -114,7 +114,6 @@ namespace bd_backend.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Status")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("LaboratoryExaminationId");
@@ -217,7 +216,6 @@ namespace bd_backend.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Status")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("PatientVisitId");

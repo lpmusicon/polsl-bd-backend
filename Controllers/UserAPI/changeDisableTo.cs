@@ -15,6 +15,12 @@ namespace bd_backend.Controllers{
     };
     [ApiController]
     [Route("api/user/changedisabletime")]
+    /*
+    {
+	"Login": "",
+	"newDisableTime": ""
+    }
+    */
     public class changeDisableToController : ControllerBase{
         public IActionResult Post(ChangeDT ndt){
             if(ndt.Login != null && ndt.newDisableTime != null){
