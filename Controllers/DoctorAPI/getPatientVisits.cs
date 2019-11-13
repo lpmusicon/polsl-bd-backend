@@ -24,6 +24,7 @@ namespace bd_backend.Controllers{
     [Route("api/doctor/getpatientvisits/")]
     public class getDoctorsPatientVisitsController : ControllerBase{
         [HttpGet("{id}")]
+<<<<<<< HEAD
         public string Get(int id){
             using (var db = new DatabaseContext()){
             var result = (from p in db.Patients join pv in db.PatientVisits on p.PatientId equals pv.PatientId
@@ -39,6 +40,15 @@ namespace bd_backend.Controllers{
             patientLastname = p.Lastname, registerDate = pv.RegisterDate }).ToList();  
             return JsonSerializer.Serialize<System.Collections.Generic.List<bd_backend.Controllers.ADPV>>(result);
             }
+=======
+        public int Get(int id){
+            return id;
+             //using (var db = new DatabaseContext()){
+              //   var pv = db.PatientVisits.Select(x=> x.DoctorId == DoctorId);
+            
+            //return JsonSerializer.Serialize<Microsoft.EntityFrameworkCore.DbSet<PatientVisit>>(pv);
+             //}
+>>>>>>> master
         }
     }
 }
