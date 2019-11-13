@@ -10,10 +10,11 @@ using System.Text.Json.Serialization;
 
 namespace bd_backend.Controllers{   
     [ApiController]
-    [Route("api/doctor/getpatientvisits")]
+    [Route("api/doctor/getpatientvisits/")]
     public class getDoctorsPatientVisitsController : ControllerBase{
-        public int Get(int DoctorId){
-            return DoctorId;
+        [HttpGet("{id}")]
+        public int Get(int id){
+            return id;
              //using (var db = new DatabaseContext()){
               //   var pv = db.PatientVisits.Select(x=> x.DoctorId == DoctorId);
             
