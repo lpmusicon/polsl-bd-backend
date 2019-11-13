@@ -19,14 +19,14 @@ namespace bd_backend.Controllers{
         public string PWZNumber { get; set; }
     };
     [ApiController]
-    [Route("api/register")]
-    public class RegisterController : ControllerBase{
+    [Route("api/user/register")]
+    public class userRegisterController : ControllerBase{
         public IActionResult Post(RegisterData nu){
             
             using (var db = new DatabaseContext()){
                 var uniq = db.Users.SingleOrDefault(x => x.Login == nu.Login); // tutaj sprawdzanie czy login jest unikalny // JAK ZROBIC UNIQUE W TABELACH
                 if(uniq != null) return BadRequest();
-                if(nu.Login != null && nu.Password != null && nu.Role != null && nu.Name != null && nu.Lastname != null && (nu.PWZNumber != null || (nu.PWZNumber == null && nu.Role != "Doctor"))){
+                if(nu.Login != null && nu.Password != null && nu.Role != null && nu.Name != null && nu.Lastname != null && (nu.PWZNumber != null && nu.PWZNumber.Length == 7 && nu.PWZNumber.All(char.IsDigit) || (nu.PWZNumber == null && nu.Role != "DOCT"))){
                     var user = new User{
                         Login = nu.Login,
                         Password = nu.Password,

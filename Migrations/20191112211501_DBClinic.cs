@@ -125,11 +125,11 @@ namespace bd_backend.Migrations
                 {
                     PatientVisitId = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Description = table.Column<string>(nullable: false),
-                    Diagnosis = table.Column<string>(nullable: false),
+                    Description = table.Column<string>(nullable: true),
+                    Diagnosis = table.Column<string>(nullable: true),
                     Status = table.Column<string>(nullable: false),
                     RegisterDate = table.Column<DateTime>(nullable: false),
-                    CloseDate = table.Column<DateTime>(nullable: false),
+                    CloseDate = table.Column<DateTime>(nullable: true),
                     ReceptionistId = table.Column<int>(nullable: false),
                     PatientId = table.Column<int>(nullable: false),
                     DoctorId = table.Column<int>(nullable: false)
@@ -163,12 +163,12 @@ namespace bd_backend.Migrations
                 {
                     LaboratoryExaminationId = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Result = table.Column<string>(nullable: false),
+                    Result = table.Column<string>(nullable: true),
                     DoctorComment = table.Column<string>(nullable: true),
                     OrderDate = table.Column<DateTime>(nullable: false),
-                    ExaminationDate = table.Column<DateTime>(nullable: false),
+                    ExaminationDate = table.Column<DateTime>(nullable: true),
                     MenagerComment = table.Column<string>(nullable: true),
-                    ApprovalRejectionDate = table.Column<DateTime>(nullable: false),
+                    ApprovalRejectionDate = table.Column<DateTime>(nullable: true),
                     Status = table.Column<string>(nullable: false),
                     PatientVisitId = table.Column<int>(nullable: false),
                     ExaminationDictionaryId = table.Column<int>(nullable: false),

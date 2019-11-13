@@ -9,21 +9,20 @@ using System.Text.Json;
 using System.Text.Json.Serialization; 
 
 namespace bd_backend.Controllers{
-    public class ChangePassword{
+    public class ChangeDT{
         public string Login { get; set; }
-        public string newPassword { get; set; }
+        public DateTime newDisableTime { get; set; }
     };
     [ApiController]
-    [Route("api/changepassword")]
-    public class changePasswordController : ControllerBase{
-        public IActionResult Post(ChangePassword np){
-            
-            if(np.Login != null && np.newPassword != null){
+    [Route("api/user/changedisabletime")]
+    public class changeDisableToController : ControllerBase{
+        public IActionResult Post(ChangeDT ndt){
+            if(ndt.Login != null && ndt.newDisableTime != null){
                 // Biere login
                 using (var db = new DatabaseContext()){
-                    var user = db.Users.SingleOrDefault(x => x.Login == np.Login); // tutaj sprawdzanie czy login jest unikalny // JAK ZROBIC UNIQUE W TABELACH
+                    var user = db.Users.SingleOrDefault(x => x.Login == ndt.Login); // tutaj sprawdzanie czy login jest unikalny // JAK ZROBIC UNIQUE W TABELACH
                     if(user != null){
-                        user.Password = np.newPassword;
+                        user.DisabledTo = ndt.newDisableTime;
                         db.SaveChanges();
                         return Ok();
                     }else return NotFound();

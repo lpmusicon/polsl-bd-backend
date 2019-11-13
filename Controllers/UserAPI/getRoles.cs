@@ -15,7 +15,7 @@ namespace bd_backend.Controllers{
     };
     
     [ApiController]
-    [Route("api/getroles")]
+    [Route("api/user/getroles")]
     public class getRoleController : ControllerBase{
         public string Get(){
             

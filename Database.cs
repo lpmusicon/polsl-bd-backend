@@ -117,13 +117,12 @@ public class PhysicalExamination{
 
 public class LaboratoryExamination{
     public int LaboratoryExaminationId { get; set; }
-    [Required]
     public string Result { get; set; }
     public string DoctorComment { get; set; }
     public DateTime OrderDate { get; set; } // data z godzina
-    public DateTime ExaminationDate { get; set; } // data z godzina
+    public DateTime? ExaminationDate { get; set; } // data z godzina
     public string MenagerComment { get; set; }
-    public DateTime ApprovalRejectionDate { get; set; } // data z godzina
+    public DateTime? ApprovalRejectionDate { get; set; } // data z godzina
     [Required]
     public string Status { get; set; }
 
@@ -140,14 +139,12 @@ public class LaboratoryExamination{
 
 public class PatientVisit{
   public int PatientVisitId { get; set; }
-  [Required]
   public string Description { get; set; }
-  [Required]
   public string Diagnosis { get; set; }
   [Required]
   public string Status { get; set; }
   public DateTime RegisterDate { get; set; }
-  public DateTime CloseDate { get; set; } // data zamkniecia wizyty
+  public DateTime? CloseDate { get; set; } // data zamkniecia wizyty
 
   public int ReceptionistId{ get; set; }
   public Receptionist Receptionist{ get; set; }

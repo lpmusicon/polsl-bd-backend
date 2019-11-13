@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace bd_backend.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20191112183138_DBClinic")]
+    [Migration("20191112211501_DBClinic")]
     partial class DBClinic
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -83,13 +83,13 @@ namespace bd_backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("ApprovalRejectionDate")
+                    b.Property<DateTime?>("ApprovalRejectionDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("DoctorComment")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("ExaminationDate")
+                    b.Property<DateTime?>("ExaminationDate")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("ExaminationDictionaryId")
@@ -111,7 +111,6 @@ namespace bd_backend.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Result")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Status")
@@ -196,15 +195,13 @@ namespace bd_backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("CloseDate")
+                    b.Property<DateTime?>("CloseDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Diagnosis")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("DoctorId")
