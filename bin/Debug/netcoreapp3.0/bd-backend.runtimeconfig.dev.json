@@ -1,8 +1,8 @@
 {
   "runtimeOptions": {
     "additionalProbingPaths": [
-      "C:\\Users\\LPMus\\.dotnet\\store\\|arch|\\|tfm|",
-      "C:\\Users\\LPMus\\.nuget\\packages",
+      "C:\\Users\\Plechu\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\Plechu\\.nuget\\packages",
       "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
     ]
   }
