@@ -7,8 +7,8 @@ using BackendProject.Models;
 namespace BackendProject.Controllers
 {
     [ApiController]
-    [Route("examination/dictionary")]
-    public class ExaminationsDictionaryController : ControllerBase
+    [Route("examination")]
+    public class ExaminationController : ControllerBase
     {
         [HttpGet("{type}")]
         public string Get(char type)

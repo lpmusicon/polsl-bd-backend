@@ -9,10 +9,11 @@ namespace BackendProject.Controllers
 {
     [ApiController]
     [Route("visit")]
-    [Route("visit/all")]
     public class VisitController : ControllerBase
     {
-        public string Get()
+        [HttpGet]
+        [HttpGet("all")]
+        public string All()
         {
             using var db = new DatabaseContext();
             var result = (from p in db.Patients
@@ -35,19 +36,15 @@ namespace BackendProject.Controllers
 
             return JsonSerializer.Serialize<List<PatientVisitsList>>(result);
         }
-    }
 
-    /*
-    {
-        "PatientId": ,
-        "DoctorId": ,
-        "ReceptionistId": 
-    }
-    */
-    [ApiController]
-    [Route("visit/register")]
-    public class VisitRegisterController : ControllerBase
-    {
+        /*
+        {
+            "PatientId": ,
+            "DoctorId": ,
+            "ReceptionistId": 
+        }
+        */
+        [HttpPost("register")]
         public IActionResult Post(PatientVisit input)
         {
 
@@ -66,18 +63,13 @@ namespace BackendProject.Controllers
             }
             return BadRequest();
         }
-    }
 
-    /* 
-    {
-    "PatientVisitId": , 
-    "Description": ""
-    }
-    */
-    [ApiController]
-    [Route("visit")]
-    public class VisitCancelController : ControllerBase
-    {
+        /* 
+        {
+            "PatientVisitId": , 
+            "Description": ""
+        }
+        */
         [HttpPost("{visitId}/cancel")]
         public IActionResult Post(int visitId, VisitCancelModel formData)
         {
@@ -95,20 +87,15 @@ namespace BackendProject.Controllers
             }
             return BadRequest();
         }
-    }
 
-    /* 
-    {
-    "PatientVisitId": , 
-    "DoctorID": , 
-    "Description": "",
-    "Diagnosis": ""  
-    }
-    */
-    [ApiController]
-    [Route("visit")]
-    public class VisitCloseController : ControllerBase
-    {
+        /* 
+        {
+            "PatientVisitId": , 
+            "DoctorID": , 
+            "Description": "",
+            "Diagnosis": ""  
+        }
+        */
         [HttpPost("{visitId}/close")]
         public IActionResult Post(PatientVisitForm input)
         {
@@ -133,5 +120,4 @@ namespace BackendProject.Controllers
             return BadRequest();
         }
     }
-
 }

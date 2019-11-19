@@ -8,16 +8,35 @@ using BackendProject.Models;
 namespace BackendProject.Controllers
 {
     [ApiController]
-    [Route("laboratory_worker/examination_execute")]
-    /*
+    [Route("laboratory_worker")]
+
+    public class LaboratoryWorkerController : ControllerBase
     {
-    "LaboratoryExaminationId": ,
-    "Result": "",
-    "LaboratoryWorkerId": 
-    }
-    */
-    public class ExaminationExecuteController : ControllerBase
-    {
+        [HttpGet]
+        [HttpGet("all")]
+        public string All()
+        {
+            using var db = new DatabaseContext();
+            var result = (from le in db.LaboratoryExaminations
+                          join ed in db.ExaminationsDictionary on le.ExaminationDictionaryId equals ed.ExaminationDictionaryId
+                          where le.Status == "Ordered"
+                          select new OrderedExaminationList
+                          {
+                              LaboratoryExaminatonName = ed.Name,
+                              DoctorComment = le.DoctorComment,
+                              OrderDate = le.OrderDate,
+                          }).ToList();
+            return JsonSerializer.Serialize<List<OrderedExaminationList>>(result);
+        }
+
+        /*
+        {
+            "LaboratoryExaminationId": ,
+            "Result": "",
+            "LaboratoryWorkerId": 
+        }
+        */
+        [HttpPost("{LaboratoryExaminationId}/execute")]
         public IActionResult Post(ExaminationExecute input)
         {
             using var db = new DatabaseContext();
@@ -33,18 +52,14 @@ namespace BackendProject.Controllers
             }
             return BadRequest();
         }
-    }
 
-    [ApiController]
-    [Route("laboratory_worker/examination_cancel")]
-    /*
-    {
-        "LaboratoryExaminationsId": ,
-        "LaboratoryWorkerId": 
-    }
-    */
-    public class ExaminationCancelController : ControllerBase
-    {
+        /*
+        {
+            "LaboratoryExaminationsId": ,
+            "LaboratoryWorkerId": 
+        }
+        */
+        [HttpPost("{LaboratoryExaminationId}/cancel")]
         public IActionResult Post(ExaminationCancel input)
         {
             using var db = new DatabaseContext();
@@ -58,27 +73,6 @@ namespace BackendProject.Controllers
                 return Ok();
             }
             return BadRequest();
-        }
-    }
-
-    [ApiController]
-    [Route("laboratory_worker/get_ordered_examinations_list/")]
-    [Route("laboratory_manager/get_ordered_examinations_list/")]
-    public class GetOrderedExaminationsListController : ControllerBase
-    {
-        public string Get()
-        {
-            using var db = new DatabaseContext();
-            var result = (from le in db.LaboratoryExaminations
-                          join ed in db.ExaminationsDictionary on le.ExaminationDictionaryId equals ed.ExaminationDictionaryId
-                          where le.Status == "Ordered"
-                          select new OrderedExaminationList
-                          {
-                              LaboratoryExaminatonName = ed.Name,
-                              DoctorComment = le.DoctorComment,
-                              OrderDate = le.OrderDate,
-                          }).ToList();
-            return JsonSerializer.Serialize<List<OrderedExaminationList>>(result);
         }
     }
 }
