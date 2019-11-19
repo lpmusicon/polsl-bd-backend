@@ -23,7 +23,6 @@ namespace BackendProject.Controllers
             _userService = userService;
         }
         
-
         /* DisabledTo nie trzeba wypelniac bedzie dzialac, PWZNumber potrzebny tylko do lekarza
         {
             "Login": "",
@@ -158,7 +157,7 @@ namespace BackendProject.Controllers
             "NewPassword": ""
         }
         */
-        [HttpPost("{userId}/passwd")]
+        [HttpPatch("{userId}/passwd")]
         public IActionResult Password(ChangePassword input)
         {
 

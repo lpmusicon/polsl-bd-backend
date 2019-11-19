@@ -27,7 +27,7 @@ namespace BackendProject.Controllers
         }
         */
         [HttpPost("register")]
-        public IActionResult Post(Patient input)
+        public IActionResult Register(Patient input)
         {
             using var db = new DatabaseContext();
             // tutaj sprawdzanie czy login jest unikalny
@@ -42,15 +42,10 @@ namespace BackendProject.Controllers
             }
             return BadRequest();
         }
-    }
 
-    [ApiController]
-    [Route("patient")]
-    public class PatientVisitController : ControllerBase
-    {
         [HttpGet("{patientId}/visit")]
         [HttpGet("{patientId}/visit/all")]
-        public ActionResult Get(int patientId)
+        public IActionResult Visits(int patientId)
         {
             using var db = new DatabaseContext();
             var result = (
