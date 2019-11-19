@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace BackendProject.Interface
+namespace BackendProject.Models
 {
     // User Interfaces
     public class RegisterData

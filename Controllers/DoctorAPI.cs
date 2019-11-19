@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-using BackendProject.Interface;
+using BackendProject.Models;
 
 namespace BackendProject.Controllers
 {
@@ -15,7 +15,10 @@ namespace BackendProject.Controllers
         public string Get()
         {
             using var db = new DatabaseContext();
-            var result = (from x in db.Doctors select new DoctorsList { DoctorId = x.DoctorId, Name = x.Name, Lastname = x.Lastname }).ToList();
+            var result = (from x in db.Doctors select new DoctorsList { 
+                DoctorId = x.DoctorId, 
+                Name = x.Name, 
+                Lastname = x.Lastname }).ToList();
 
             return JsonSerializer.Serialize<List<DoctorsList>>(result);
         }

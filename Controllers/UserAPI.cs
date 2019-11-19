@@ -1,35 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using BackendProject.Interface;
+using BackendProject.Models;
 using BackendProject.Helpers;
 
 namespace BackendProject.Controllers
 {
-    /* DisabledTo nie trzeba wypelniac bedzie dzialac, PWZNumber potrzebny tylko do lekarza
-    {
-        "Login": "",
-        "Password": "",
-        "Role": "",
-        "DisabledTo": "",
-        "Name": "",
-        "Lastname": "",
-        "PWZNumber": ""
-    }
-    */
     [ApiController]
-    [Route("user/register")]
-    public class UserRegisterController : ControllerBase
+    [Route("User")]
+    public class UserController: ControllerBase
     {
-        [AllowAnonymous]
-        [HttpPost]
-        public IActionResult Post([FromForm]RegisterData input)
+        private readonly ILogger<UserController> _logger;
+        private readonly IUserService _userService;
+
+        public UserController(ILogger<UserController> logger, IUserService userService)
+        {
+            _logger = logger;
+            _userService = userService;
+        }
+        
+
+        /* DisabledTo nie trzeba wypelniac bedzie dzialac, PWZNumber potrzebny tylko do lekarza
+        {
+            "Login": "",
+            "Password": "",
+            "Role": "",
+            "DisabledTo": "",
+            "Name": "",
+            "Lastname": "",
+            "PWZNumber": ""
+        }
+        */
+        [HttpPost("register")]
+        public IActionResult Register([FromForm]RegisterData input)
         {
             using var db = new DatabaseContext();
             // sprawdzenie czy istnieje
@@ -119,20 +126,15 @@ namespace BackendProject.Controllers
             }
             return BadRequest("Bad luck");
         }
-    }
-
-    /*
-    {
-        "Login": "",
-        "NewDisableTime": ""
-    }
-    */
-    [ApiController]
-    [Route("user")]
-    public class ChangeDisableToController : ControllerBase
-    {
+    
+        /*
+        {
+            "Login": "",
+            "NewDisableTime": ""
+        }
+        */
         [HttpPost("{userId}/disable")]
-        public IActionResult Post(ChangeDisableDate ndt)
+        public IActionResult Disable(ChangeDisableDate ndt)
         {
             if (ndt.Login != null && ndt.NewDisableTime != null)
             {
@@ -149,21 +151,15 @@ namespace BackendProject.Controllers
             }
             return BadRequest();
         }
-    }
 
-    /*
-    {
-        "Login": "",
-        "NewPassword": ""
-    }
-    */
-    [ApiController]
-    [Authorize]
-    [Route("user")]
-    public class ChangePasswordController : ControllerBase
-    {
+        /*
+        {
+            "Login": "",
+            "NewPassword": ""
+        }
+        */
         [HttpPost("{userId}/passwd")]
-        public IActionResult Post(ChangePassword input)
+        public IActionResult Password(ChangePassword input)
         {
 
             if (input.Login != null && input.NewPassword != null)
@@ -184,15 +180,10 @@ namespace BackendProject.Controllers
             }
             return BadRequest();
         }
-    }
 
-    [ApiController]
-    [Authorize]
-    [Route("user/all")]
-    [Route("user")]
-    public class UsersController : ControllerBase
-    {
-        public string Get()
+        [HttpGet]
+        [HttpGet("all")]
+        public string All()
         {
             var result = (from x in new DatabaseContext().Users
                           select new GetUser
@@ -205,12 +196,8 @@ namespace BackendProject.Controllers
 
             return JsonSerializer.Serialize<List<GetUser>>(result);
         }
-    }
 
-    [ApiController]
-    [Route("user/roles")]
-    public class RoleController : ControllerBase
-    {
+        [HttpGet("roles")]
         public string Get()
         {
             List<Role> roles = new List<Role>() {
@@ -223,23 +210,9 @@ namespace BackendProject.Controllers
 
             return JsonSerializer.Serialize<List<Role>>(roles);
         }
-    }
-
-    [ApiController]
-    [Route("user/authenticate")]
-    public class LoginController : ControllerBase
-    {
-        private readonly ILogger<LoginController> _logger;
-
-        public LoginController(ILogger<LoginController> logger, IUserService userService)
-        {
-            _logger = logger;
-            _userService = userService;
-        }
-        private readonly IUserService _userService;
 
         [AllowAnonymous]
-        [HttpPost]
+        [HttpPost("authenticate")]
         public async Task<IActionResult> Authenticate([FromForm]AuthenticateModel model)
         {
             _logger.LogWarning("ERROR");

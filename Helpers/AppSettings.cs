@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using BackendProject.Interface;
+using BackendProject.Models;
 
 namespace BackendProject.Helpers
 {
