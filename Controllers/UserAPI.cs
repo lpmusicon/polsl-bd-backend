@@ -35,6 +35,7 @@ namespace BackendProject.Controllers
         }
         */
         [HttpPost("register")]
+        [Authorize(Roles="ADMN")]
         public IActionResult Register([FromForm]RegisterData input)
         {
             using var db = new DatabaseContext();
@@ -133,6 +134,7 @@ namespace BackendProject.Controllers
         }
         */
         [HttpPost("{userId}/disable")]
+        [Authorize(Roles="ADMN")]
         public IActionResult Disable(ChangeDisableDate ndt)
         {
             if (ndt.Login != null && ndt.NewDisableTime != null)
@@ -158,6 +160,7 @@ namespace BackendProject.Controllers
         }
         */
         [HttpPatch("{userId}/passwd")]
+        [Authorize(Roles="ADMN")]
         public IActionResult Password(ChangePassword input)
         {
 
@@ -182,6 +185,7 @@ namespace BackendProject.Controllers
 
         [HttpGet]
         [HttpGet("all")]
+        [Authorize(Roles="ADMN")]
         public string All()
         {
             var result = (from x in new DatabaseContext().Users
@@ -197,6 +201,7 @@ namespace BackendProject.Controllers
         }
 
         [HttpGet("roles")]
+        [Authorize(Roles="ADMN")]
         public string Get()
         {
             List<Role> roles = new List<Role>() {

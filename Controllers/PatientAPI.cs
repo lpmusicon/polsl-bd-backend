@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using BackendProject.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BackendProject.Controllers
 {
@@ -27,6 +28,7 @@ namespace BackendProject.Controllers
         }
         */
         [HttpPost("register")]
+        [Authorize(Roles="RECP")]
         public IActionResult Register(Patient input)
         {
             using var db = new DatabaseContext();
@@ -45,6 +47,7 @@ namespace BackendProject.Controllers
 
         [HttpGet("{patientId}/visit")]
         [HttpGet("{patientId}/visit/all")]
+        [Authorize(Roles="RECP, DOCT")]
         public IActionResult Visits(int patientId)
         {
             using var db = new DatabaseContext();

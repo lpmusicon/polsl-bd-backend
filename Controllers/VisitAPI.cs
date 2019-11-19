@@ -1,15 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using Microsoft.EntityFrameworkCore;
 using BackendProject.Models;
 
-namespace BackendProject.Controllers 
+namespace BackendProject.Controllers
 {
     [ApiController]
     [Route("visit")]
@@ -83,7 +79,7 @@ namespace BackendProject.Controllers
     public class VisitCancelController : ControllerBase
     {
         [HttpPost("{visitId}/cancel")]
-        public IActionResult Post(int visitId, SIVisitCancel formData)
+        public IActionResult Post(int visitId, VisitCancelModel formData)
         {
             using var db = new DatabaseContext();
             // anuluje tylko swoje wizyty? jesli tak, dopisz cos, teraz moze anulowac wszystko (Kononowicz mode)

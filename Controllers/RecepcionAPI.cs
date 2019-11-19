@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using Microsoft.EntityFrameworkCore;
-using BackendProject.Models;
 
 namespace BackendProject.Controllers
 {
     [ApiController]
     [Route("reception/tea")]
+    [Authorize(Roles="RECP, DOCT")]
     public class TeaTime : ControllerBase
     {
         public IActionResult Get()

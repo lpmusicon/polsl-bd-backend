@@ -6,12 +6,22 @@ namespace BackendProject.Models
     // User Interfaces
     public class RegisterData
     {
+        [Required]
         public string Login { get; set; }
+
+        [Required]
         public string Password { get; set; }
+
+        [Required]
         public string Role { get; set; }
         public DateTime DisabledTo { get; set; } // to mozna zostawic puste, wtedy data bedzie najwczesniejsza i konto bedzie domyslnie aktywne
+
+        [Required]
         public string Name { get; set; }
+
+        [Required]
         public string Lastname { get; set; }
+
         public string PWZNumber { get; set; }
     };
 
@@ -39,13 +49,6 @@ namespace BackendProject.Models
     {
         public string Mnemo { get; set; }
         public string Name { get; set; }
-    };
-
-    // Recepcion Interfaces
-    public class PatientVisitCancel
-    {
-        public int PatientVisitId { get; set; }
-        public string Description { get; set; }
     };
 
     public class DoctorsList
@@ -162,7 +165,7 @@ namespace BackendProject.Models
         public string Name { get; set; }
     };
 
-    public struct SIVisitCancel
+    public struct VisitCancelModel
     {
         public string Reason { get; set; }
     }
