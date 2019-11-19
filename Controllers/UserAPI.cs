@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using BackendProject.Interface;
+using BackendProject.Helpers;
 
 namespace BackendProject.Controllers
 {
@@ -182,6 +184,7 @@ namespace BackendProject.Controllers
     }
 
     [ApiController]
+    [Authorize]
     [Route("user/all")]
     [Route("user")]
     public class UsersController : ControllerBase
@@ -216,6 +219,29 @@ namespace BackendProject.Controllers
             };
 
             return JsonSerializer.Serialize<List<Role>>(roles);
+        }
+    }
+
+    [ApiController]
+    [Route("user/authenticate")]
+    public class LoginController : ControllerBase
+    {
+        private IUserService _userService;
+        public LoginController(IUserService userService)
+        {
+            _userService = userService;
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> Authenticate([FromForm]AuthenticateModel model)
+        {
+            var user = await _userService.Authenticate(model.Login, model.Password);
+
+            if (user == null)
+                return BadRequest(new { message = "Username or password is incorrect" });
+
+            return Ok(user);
         }
     }
 }

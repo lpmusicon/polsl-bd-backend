@@ -1087,23 +1087,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\PC\\.nuget\\packages\\": {},
+    "C:\\Users\\LPMus\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\PC\\Documents\\Repos\\bd-ubiquitous-garbanzo-backend\\bd-backend.csproj",
+      "projectUniqueName": "C:\\Users\\LPMus\\Documents\\Projekty\\bd-ubiquitous-garbanzo-backend\\bd-backend.csproj",
       "projectName": "bd-backend",
-      "projectPath": "C:\\Users\\PC\\Documents\\Repos\\bd-ubiquitous-garbanzo-backend\\bd-backend.csproj",
-      "packagesPath": "C:\\Users\\PC\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\PC\\Documents\\Repos\\bd-ubiquitous-garbanzo-backend\\obj\\",
+      "projectPath": "C:\\Users\\LPMus\\Documents\\Projekty\\bd-ubiquitous-garbanzo-backend\\bd-backend.csproj",
+      "packagesPath": "C:\\Users\\LPMus\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\LPMus\\Documents\\Projekty\\bd-ubiquitous-garbanzo-backend\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\PC\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\LPMus\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [

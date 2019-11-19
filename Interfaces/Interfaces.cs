@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace BackendProject.Interface
 {
@@ -164,5 +165,14 @@ namespace BackendProject.Interface
     public struct SIVisitCancel
     {
         public string Reason { get; set; }
+    }
+
+    public class AuthenticateModel
+    {
+        [Required]
+        public string Login { get; set; }
+
+        [Required]
+        public string Password { get; set; }
     }
 }
