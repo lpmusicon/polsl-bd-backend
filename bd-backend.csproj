@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    <RootNamespace>bd_backend</RootNamespace>
+    <RootNamespace>BackendProject</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "bd_backend": {
+    "BackendProject": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "weatherforecast",

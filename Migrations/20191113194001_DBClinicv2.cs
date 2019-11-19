@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace bd_backend.Migrations
+namespace BackendProject.Migrations
 {
     public partial class DBClinicv2 : Migration
     {

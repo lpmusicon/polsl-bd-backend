@@ -2,17 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using bd_backend.Interface;
+using BackendProject.Interface;
 
-namespace bd_backend.Controllers{
-
-    [ApiController]
-    [Route("user/user_register")]
+namespace BackendProject.Controllers
+{
     /* DisabledTo nie trzeba wypelniac bedzie dzialac, PWZNumber potrzebny tylko do lekarza
     {
         "Login": "",
@@ -24,74 +21,92 @@ namespace bd_backend.Controllers{
         "PWZNumber": ""
     }
     */
-    public class UserRegisterController : ControllerBase{
-        public IActionResult Post(RegisterData input){
-            
-            using (var db = new DatabaseContext()){
- 
-                if(db.Users.SingleOrDefault(x => x.Login == input.Login) != null) return BadRequest(); // sprawdzenie czy login istnieje
+    [ApiController]
+    [Route("user/register")]
+    public class UserRegisterController : ControllerBase
+    {
+        public IActionResult Post(RegisterData input)
+        {
+            using (var db = new DatabaseContext())
+            {
+                // sprawdzenie czy istnieje
+                if (db.Users.SingleOrDefault(x => x.Login == input.Login) != null)
+                    return BadRequest();
 
-                if(input.Login != null && input.Password != null && input.Role != null && input.Name != null && input.Lastname != null 
-                && (input.PWZNumber != null && input.PWZNumber.Length == 7 && input.PWZNumber.All(char.IsDigit) || (input.PWZNumber == null && input.Role != "DOCT"))){
-                    var user = new User{
+                if (input.Login != null &&
+                    input.Password != null &&
+                    input.Role != null &&
+                    input.Name != null &&
+                    input.Lastname != null &&
+                    (input.PWZNumber != null && input.PWZNumber.Length == 7 && input.PWZNumber.All(char.IsDigit)))
+                {
+                    var user = new User
+                    {
                         Login = input.Login,
                         Password = input.Password,
                         Role = input.Role,
                         DisabledTo = input.DisabledTo
                     };
-                    if(input.Role != "RECP" && input.Role != "LABW" && input.Role != "LABM" && input.Role != "DOCT" && input.Role != "ADMN") return BadRequest(); // jesli zla rola
-                    
+
+                    if (input.Role != "RECP" && input.Role != "LABW" && input.Role != "LABM" && input.Role != "DOCT" && input.Role != "ADMN")
+                        return BadRequest(); // jesli zla rola
+
                     db.Users.Add(user);
-                    
                     db.SaveChanges(); // zapis usera do bazy
                     var login_record = db.Users.Single(x => x.Login == input.Login); // tutaj jest record w ktorym jest id tego loginu
 
-                    switch(input.Role){
+                    switch (input.Role)
+                    {
                         case "ADMN":
-                            var ad = new Admin{
+                            Admin ad = new Admin
+                            {
                                 AdminId = login_record.UserId,
                                 Name = input.Name,
                                 Lastname = input.Lastname
                             };
                             db.Admins.Add(ad);
-                        break;
+                            break;
 
                         case "RECP":
-                            var rec = new Receptionist{
+                            Receptionist rec = new Receptionist
+                            {
                                 ReceptionistId = login_record.UserId,
                                 Name = input.Name,
                                 Lastname = input.Lastname
                             };
                             db.Receptionists.Add(rec);
-                        break;
+                            break;
 
                         case "LABW":
-                            var lw = new LaboratoryWorker{
+                            LaboratoryWorker lw = new LaboratoryWorker
+                            {
                                 LaboratoryWorkerId = login_record.UserId,
                                 Name = input.Name,
                                 Lastname = input.Lastname
                             };
                             db.LaboratoryWorkers.Add(lw);
-                        break;
+                            break;
 
                         case "LABM":
-                            var lm = new LaboratoryManager{
+                            LaboratoryManager lm = new LaboratoryManager
+                            {
                                 LaboratoryManagerId = login_record.UserId,
                                 Name = input.Name,
                                 Lastname = input.Lastname
                             };
                             db.LaboratoryManagers.Add(lm);
-                        break;
+                            break;
 
                         case "DOCT":
-                            var doc = new Doctor{
+                            Doctor doc = new Doctor
+                            {
                                 DoctorId = login_record.UserId,
                                 Name = input.Name,
                                 Lastname = input.Lastname,
                                 PWZNumber = input.PWZNumber
                             };
                             db.Doctors.Add(doc);
-                        break;
+                            break;
                     }
                     db.SaveChanges();
                     return StatusCode(201); // Created
@@ -101,78 +116,104 @@ namespace bd_backend.Controllers{
         }
     }
 
-    [ApiController]
-    [Route("user/change_disable_date")]
     /*
     {
-	"Login": "",
-	"NewDisableTime": ""
+        "Login": "",
+        "NewDisableTime": ""
     }
     */
-    public class ChangeDisableToController : ControllerBase{
-        public IActionResult Post(ChangeDisableDate ndt){
-            if(ndt.Login != null && ndt.NewDisableTime != null){
+    [ApiController]
+    [Route("user")]
+    public class ChangeDisableToController : ControllerBase
+    {
+        [HttpPost("{userId}/disable")]
+        public IActionResult Post(ChangeDisableDate ndt)
+        {
+            if (ndt.Login != null && ndt.NewDisableTime != null)
+            {
                 // Biere login
-                using (var db = new DatabaseContext()){
-                    var user = db.Users.SingleOrDefault(x => x.Login == ndt.Login); // tutaj sprawdzanie czy login jest unikalny // JAK ZROBIC UNIQUE W TABELACH
-                    if(user != null){
+                using (var db = new DatabaseContext())
+                {
+                    var user = db.Users.SingleOrDefault(x => x.Login == ndt.Login);
+                    if (user != null)
+                    {
                         user.DisabledTo = ndt.NewDisableTime;
                         db.SaveChanges();
                         return Ok();
-                    }else return NotFound();
-                } 
-            }else return BadRequest();
+                    }
+                    return NotFound();
+                }
+            }
+            return BadRequest();
         }
     }
 
-    [ApiController]
-    [Route("user/change_password")]
     /*
     {
-	"Login": "",
-	"NewPassword": ""
+        "Login": "",
+        "NewPassword": ""
     }
     */
-    public class ChangePasswordController : ControllerBase{
-        public IActionResult Post(ChangePassword input){
-            
-            if(input.Login != null && input.NewPassword != null){
+    [ApiController]
+    [Route("user")]
+    public class ChangePasswordController : ControllerBase
+    {
+        [HttpPost("{userId}/passwd")]
+        public IActionResult Post(ChangePassword input)
+        {
+
+            if (input.Login != null && input.NewPassword != null)
+            {
                 // Biere login
-                using (var db = new DatabaseContext()){
-                    var user = db.Users.SingleOrDefault(x => x.Login == input.Login); 
-                    if(user != null){
+                using (var db = new DatabaseContext())
+                {
+                    var user = db.Users.SingleOrDefault(x => x.Login == input.Login);
+                    if (user != null)
+                    {
                         user.Password = input.NewPassword;
                         db.SaveChanges();
                         return Ok();
-                    }else return NotFound();
-                } 
-            }else return BadRequest();
+                    }
+                    return NotFound();
+                }
+            }
+            return BadRequest();
         }
     }
 
     [ApiController]
-    [Route("user/get_users")]
-    public class GetUsersController : ControllerBase{
-        public string Get(){
-            
-            var result = (from x in new DatabaseContext().Users 
-            select new GetUser {UserId = x.UserId, Login = x.Login, Role = x.Role, DisabledTo = x.DisabledTo }).ToList();  
+    [Route("user/all")]
+    [Route("user")]
+    public class UsersController : ControllerBase
+    {
+        public string Get()
+        {
+            var result = (from x in new DatabaseContext().Users
+                          select new GetUser
+                          {
+                              UserId = x.UserId,
+                              Login = x.Login,
+                              Role = x.Role,
+                              DisabledTo = x.DisabledTo
+                          }).ToList();
 
             return JsonSerializer.Serialize<List<GetUser>>(result);
         }
     }
-    
+
     [ApiController]
-    [Route("user/get_roles")]
-    public class GetRoleController : ControllerBase{
-        public string Get(){
-            
-            List<Role> roles = new List<Role>();
-            roles.Add(new Role {Mnemo = "ADMN", Name = "Administrator"});
-            roles.Add(new Role {Mnemo = "DOCT", Name = "Lekarz"});
-            roles.Add(new Role {Mnemo = "RECP", Name = "Recepcjonista"});
-            roles.Add(new Role {Mnemo = "LABW", Name = "Pracownik Laboratorium"});
-            roles.Add(new Role {Mnemo = "LABM", Name = "Kierownik Laboratorium"});
+    [Route("user/roles")]
+    public class RoleController : ControllerBase
+    {
+        public string Get()
+        {
+            List<Role> roles = new List<Role>() {
+                new Role { Mnemo = "ADMN", Name = "Administrator" },
+                new Role { Mnemo = "DOCT", Name = "Lekarz" },
+                new Role { Mnemo = "RECP", Name = "Recepcjonista" },
+                new Role { Mnemo = "LABW", Name = "Pracownik Laboratorium" },
+                new Role { Mnemo = "LABM", Name = "Kierownik Laboratorium" }
+            };
 
             return JsonSerializer.Serialize<List<Role>>(roles);
         }

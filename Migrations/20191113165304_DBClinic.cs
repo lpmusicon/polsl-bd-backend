@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace bd_backend.Migrations
+namespace BackendProject.Migrations
 {
     public partial class DBClinic : Migration
     {
