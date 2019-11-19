@@ -1,11 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using BackendProject.Models;
 
@@ -13,27 +9,24 @@ namespace BackendProject.Controllers
 {
     [ApiController]
     [Route("patient")]
-    [Route("patient/all")]
     public class PatientController : ControllerBase
     {
-        public string Get()
+        [HttpGet]
+        [HttpGet("all")]
+        public string All()
         {
             using var db = new DatabaseContext();
             return JsonSerializer.Serialize<DbSet<Patient>>(db.Patients);
         }
-    }
 
-    /*
-    {
-        "Name": "",
-        "Lastname": "",
-        "PESEL": ""
-    }
-    */
-    [ApiController]
-    [Route("patient/register")]
-    public class PatientRegisterController : ControllerBase
-    {
+        /*
+        {
+            "Name": "",
+            "Lastname": "",
+            "PESEL": ""
+        }
+        */
+        [HttpPost("register")]
         public IActionResult Post(Patient input)
         {
             using var db = new DatabaseContext();
