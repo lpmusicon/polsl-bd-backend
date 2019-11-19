@@ -25,10 +25,9 @@ namespace BackendProject.Models
         public string PWZNumber { get; set; }
     };
 
-    public class ChangeDisableDate
+    public class DisableDateModel
     {
-        public string Login { get; set; }
-        public DateTime NewDisableTime { get; set; }
+        public DateTime DisableTime { get; set; }
     };
 
     public class ChangePassword
@@ -45,7 +44,7 @@ namespace BackendProject.Models
         public DateTime DisabledTo { get; set; }
     };
 
-    public class Role
+    public class RoleModel
     {
         public string Mnemo { get; set; }
         public string Name { get; set; }

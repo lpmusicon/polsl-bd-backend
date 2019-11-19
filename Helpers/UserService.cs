@@ -34,9 +34,7 @@ namespace BackendProject.Helpers
                 return null;
 
             if(!pw.CompareHashedPassword(user.Password, password))
-            {
                 return null;
-            }
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
@@ -50,13 +48,11 @@ namespace BackendProject.Helpers
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
+
             var token = tokenHandler.CreateToken(tokenDescriptor);
             user.Token = tokenHandler.WriteToken(token);
-
             
-            user.Password = null;
-            
-            return user;
+            return user.WithoutPassword();
         }
     }
 }
