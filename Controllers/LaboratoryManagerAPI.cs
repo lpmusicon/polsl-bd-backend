@@ -86,7 +86,7 @@ namespace BackendProject.Controllers
         }
         */
         [HttpPost("{LaboratoryExaminationId}/approval")]
-        public IActionResult Post(ExaminationApproval input)
+        public IActionResult Post(int LaboratoryExaminationId, ExaminationApproval input)
         {
             using var db = new DatabaseContext();
             var ex = db.LaboratoryExaminations.SingleOrDefault(x => x.LaboratoryExaminationId == input.LaboratoryExaminationId);
@@ -109,7 +109,7 @@ namespace BackendProject.Controllers
         }
         */
         [HttpPost("{LaboratoryExaminationId}/reject")]
-        public IActionResult Post(ExaminationReject input)
+        public IActionResult Post(int LaboratoryExaminationId, ExaminationReject input)
         {
             using var db = new DatabaseContext();
             var ex = db.LaboratoryExaminations.SingleOrDefault(x => x.LaboratoryExaminationId == input.LaboratoryExaminationId);

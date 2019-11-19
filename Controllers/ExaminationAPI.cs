@@ -11,26 +11,32 @@ namespace BackendProject.Controllers
     public class ExaminationController : ControllerBase
     {
         [HttpGet("{type}")]
-        public string Get(char type)
+        public List<ExaminationsDictionaryList> Get(char type)
         { // jesli chcesz fizykalne daj doctor/get_examination_dictionary/F jak laboratoryjne doctor/get_examination_dictionary/L
             using var db = new DatabaseContext();
             switch (type)
             {
                 case 'F':
-                    var resultf = (from x in db.ExaminationsDictionary
+                    var result = (from x in db.ExaminationsDictionary
                                    where x.Type == 'F'
-                                   select new ExaminationsDictionaryList { ExaminationDictionaryId = x.ExaminationDictionaryId, Name = x.Name }).ToList();
-                    return JsonSerializer.Serialize<List<ExaminationsDictionaryList>>(resultf);
+                                   select new ExaminationsDictionaryList { 
+                                       ExaminationDictionaryId = x.ExaminationDictionaryId, 
+                                       Name = x.Name }).ToList();
+                    return result;
 
                 case 'L':
-                    var resultl = (from x in db.ExaminationsDictionary
+                    var resultL = (from x in db.ExaminationsDictionary
                                    where x.Type == 'L'
-                                   select new ExaminationsDictionaryList { ExaminationDictionaryId = x.ExaminationDictionaryId, Name = x.Name }).ToList();
-                    return JsonSerializer.Serialize<List<ExaminationsDictionaryList>>(resultl);
+                                   select new ExaminationsDictionaryList { 
+                                       ExaminationDictionaryId = x.ExaminationDictionaryId, 
+                                       Name = x.Name }).ToList();
+                    return resultL;
 
                 default:
-                    return "Bad argument";
+                    return new List<ExaminationsDictionaryList>();
             }
         }
+
+        
     }
 }

@@ -60,7 +60,7 @@ namespace BackendProject.Controllers
         }
         */
         [HttpPost("{LaboratoryExaminationId}/cancel")]
-        public IActionResult Post(ExaminationCancel input)
+        public IActionResult Post(int LaboratoryExaminationId, ExaminationCancel input)
         {
             using var db = new DatabaseContext();
             var ex = db.LaboratoryExaminations.SingleOrDefault(x => x.LaboratoryExaminationId == input.LaboratoryExaminationsId);
