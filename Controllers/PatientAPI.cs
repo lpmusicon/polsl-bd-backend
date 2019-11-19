@@ -18,10 +18,8 @@ namespace BackendProject.Controllers
     {
         public string Get()
         {
-            using (var db = new DatabaseContext())
-            {
-                return JsonSerializer.Serialize<DbSet<Patient>>(db.Patients);
-            }
+            using var db = new DatabaseContext();
+            return JsonSerializer.Serialize<DbSet<Patient>>(db.Patients);
         }
     }
 
@@ -38,20 +36,18 @@ namespace BackendProject.Controllers
     {
         public IActionResult Post(Patient input)
         {
-            using (var db = new DatabaseContext())
-            {
-                // tutaj sprawdzanie czy login jest unikalny
-                if (db.Patients.SingleOrDefault(x => x.PESEL == input.PESEL) != null) 
-                    return BadRequest(); 
-
-                if (input.PatientId == 0 && input.PESEL.Length == 11 && input.PESEL.All(char.IsDigit))
-                {
-                    db.Patients.Add(input);
-                    db.SaveChanges();
-                    return StatusCode(201);
-                }
+            using var db = new DatabaseContext();
+            // tutaj sprawdzanie czy login jest unikalny
+            if (db.Patients.SingleOrDefault(x => x.PESEL == input.PESEL) != null)
                 return BadRequest();
+
+            if (input.PatientId == 0 && input.PESEL.Length == 11 && input.PESEL.All(char.IsDigit))
+            {
+                db.Patients.Add(input);
+                db.SaveChanges();
+                return StatusCode(201);
             }
+            return BadRequest();
         }
     }
 
@@ -63,34 +59,33 @@ namespace BackendProject.Controllers
         [HttpGet("{patientId}/visit/all")]
         public ActionResult Get(int patientId)
         {
-            using (var db = new DatabaseContext())
+            using var db = new DatabaseContext();
+            var result = (
+                from p in db.Patients
+                    join pv in db.PatientVisits on p.PatientId equals pv.PatientId
+                    join d in db.Doctors on pv.DoctorId equals d.DoctorId
+                    where pv.PatientId == patientId
+                    select new PatientVisitsList
             {
-                var result = (
-                    from p in db.Patients
-                        join pv in db.PatientVisits on p.PatientId equals pv.PatientId
-                        join d in db.Doctors on pv.DoctorId equals d.DoctorId
-                        where pv.PatientId == patientId
-                        select new PatientVisitsList
-                            {
-                                PatientName = p.Name,
-                                PatientLastname = p.Lastname,
-                                RegisterDate = pv.RegisterDate,
-                                PatientVisitId = pv.PatientVisitId,
-                                CloseDate = pv.CloseDate,
-                                Description = pv.Description,
-                                Diagnosis = pv.Diagnosis,
-                                DoctorName = d.Name,
-                                DoctorLastname = d.Lastname,
-                                Status = pv.Status,
-                                PatientId = patientId
-                            }).ToList();
-                
-                if(result.Count == 0) {
-                    return NotFound();
-                }
+                PatientName = p.Name,
+                PatientLastname = p.Lastname,
+                RegisterDate = pv.RegisterDate,
+                PatientVisitId = pv.PatientVisitId,
+                CloseDate = pv.CloseDate,
+                Description = pv.Description,
+                Diagnosis = pv.Diagnosis,
+                DoctorName = d.Name,
+                DoctorLastname = d.Lastname,
+                Status = pv.Status,
+                PatientId = patientId
+            }).ToList();
 
-                return Ok(JsonSerializer.Serialize<List<PatientVisitsList>>(result));
+            if (result.Count == 0)
+            {
+                return NotFound();
             }
+
+            return Ok(JsonSerializer.Serialize<List<PatientVisitsList>>(result));
         }
     }
 }

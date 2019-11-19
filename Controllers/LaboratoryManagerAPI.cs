@@ -23,20 +23,17 @@ namespace BackendProject.Controllers
     {
         public IActionResult Post(ExaminationApproval input)
         {
-            using (var db = new DatabaseContext())
+            using var db = new DatabaseContext();
+            var ex = db.LaboratoryExaminations.SingleOrDefault(x => x.LaboratoryExaminationId == input.LaboratoryExaminationId);
+            if (ex != null && ex.Status == "Executed")
             {
-
-                var ex = db.LaboratoryExaminations.SingleOrDefault(x => x.LaboratoryExaminationId == input.LaboratoryExaminationId);
-                if (ex != null && ex.Status == "Executed")
-                {
-                    ex.Status = "Approval";
-                    ex.ApprovalRejectionDate = DateTime.Now;
-                    ex.LaboratoryManagerId = input.LaboratoryManagerId;
-                    db.SaveChanges();
-                    return Ok();
-                }
-                return BadRequest();
+                ex.Status = "Approval";
+                ex.ApprovalRejectionDate = DateTime.Now;
+                ex.LaboratoryManagerId = input.LaboratoryManagerId;
+                db.SaveChanges();
+                return Ok();
             }
+            return BadRequest();
         }
     }
 
@@ -53,21 +50,18 @@ namespace BackendProject.Controllers
     {
         public IActionResult Post(ExaminationReject input)
         {
-            using (var db = new DatabaseContext())
+            using var db = new DatabaseContext();
+            var ex = db.LaboratoryExaminations.SingleOrDefault(x => x.LaboratoryExaminationId == input.LaboratoryExaminationId);
+            if (ex != null && ex.Status == "Executed" && input.ManagerComment != null)
             {
-
-                var ex = db.LaboratoryExaminations.SingleOrDefault(x => x.LaboratoryExaminationId == input.LaboratoryExaminationId);
-                if (ex != null && ex.Status == "Executed" && input.ManagerComment != null)
-                {
-                    ex.Status = "Rejected";
-                    ex.ApprovalRejectionDate = DateTime.Now;
-                    ex.ManagerComment = input.ManagerComment;
-                    ex.LaboratoryManagerId = input.LaboratoryManagerId;
-                    db.SaveChanges();
-                    return Ok();
-                }
-                return BadRequest();
+                ex.Status = "Rejected";
+                ex.ApprovalRejectionDate = DateTime.Now;
+                ex.ManagerComment = input.ManagerComment;
+                ex.LaboratoryManagerId = input.LaboratoryManagerId;
+                db.SaveChanges();
+                return Ok();
             }
+            return BadRequest();
         }
     }
 
@@ -78,46 +72,42 @@ namespace BackendProject.Controllers
     {
         public string Get()
         {
-            using (var db = new DatabaseContext())
-            {
-                var result = (from le in db.LaboratoryExaminations
-                              join lw in db.LaboratoryWorkers on le.LaboratoryWorkerId equals lw.LaboratoryWorkerId
-                              where le.Status == "Executed"
-                              select new ExecutedExaminationList
-                              {
-                                  Result = le.Result,
-                                  DoctorComment = le.DoctorComment,
-                                  OrderDate = le.OrderDate,
-                                  ExaminationDate = le.ExaminationDate,
-                                  Status = le.Status,
-                                  LabWorkerName = lw.Name,
-                                  LabWorkerLastname = lw.Lastname
-                              }).ToList();
+            using var db = new DatabaseContext();
+            var result = (from le in db.LaboratoryExaminations
+                          join lw in db.LaboratoryWorkers on le.LaboratoryWorkerId equals lw.LaboratoryWorkerId
+                          where le.Status == "Executed"
+                          select new ExecutedExaminationList
+                          {
+                              Result = le.Result,
+                              DoctorComment = le.DoctorComment,
+                              OrderDate = le.OrderDate,
+                              ExaminationDate = le.ExaminationDate,
+                              Status = le.Status,
+                              LabWorkerName = lw.Name,
+                              LabWorkerLastname = lw.Lastname
+                          }).ToList();
 
-                return JsonSerializer.Serialize<List<ExecutedExaminationList>>(result);
-            }
+            return JsonSerializer.Serialize<List<ExecutedExaminationList>>(result);
         }
         [HttpGet("{LaboratoryWorkerId}")]
         public string Get(int LaboratoryWorkerId)
         { // to na wypadek gdyby pracownik laboratorium mogl przegladac tylko swoje wykonane badania, jak moze wszystkie to wyrzucic
-            using (var db = new DatabaseContext())
-            {
-                var result = (from le in db.LaboratoryExaminations
-                              join lw in db.LaboratoryWorkers on le.LaboratoryWorkerId equals lw.LaboratoryWorkerId
-                              where le.Status == "Executed" && le.LaboratoryWorkerId == LaboratoryWorkerId
-                              select new ExecutedExaminationList
-                              {
-                                  Result = le.Result,
-                                  DoctorComment = le.DoctorComment,
-                                  OrderDate = le.OrderDate,
-                                  ExaminationDate = le.ExaminationDate,
-                                  Status = le.Status,
-                                  LabWorkerName = lw.Name,
-                                  LabWorkerLastname = lw.Lastname
-                              }).ToList();
+            using var db = new DatabaseContext();
+            var result = (from le in db.LaboratoryExaminations
+                          join lw in db.LaboratoryWorkers on le.LaboratoryWorkerId equals lw.LaboratoryWorkerId
+                          where le.Status == "Executed" && le.LaboratoryWorkerId == LaboratoryWorkerId
+                          select new ExecutedExaminationList
+                          {
+                              Result = le.Result,
+                              DoctorComment = le.DoctorComment,
+                              OrderDate = le.OrderDate,
+                              ExaminationDate = le.ExaminationDate,
+                              Status = le.Status,
+                              LabWorkerName = lw.Name,
+                              LabWorkerLastname = lw.Lastname
+                          }).ToList();
 
-                return JsonSerializer.Serialize<List<ExecutedExaminationList>>(result);
-            }
+            return JsonSerializer.Serialize<List<ExecutedExaminationList>>(result);
         }
     }
 
@@ -127,28 +117,26 @@ namespace BackendProject.Controllers
     {
         public string Get()
         {
-            using (var db = new DatabaseContext())
-            {
-                var result = (from le in db.LaboratoryExaminations
-                              join lw in db.LaboratoryWorkers on le.LaboratoryWorkerId equals lw.LaboratoryWorkerId
-                              join lm in db.LaboratoryManagers on le.LaboratoryManagerId equals lm.LaboratoryManagerId
-                              where le.Status == "Approval" || le.Status == "Rejected"
-                              select new ResolvedExaminationList
-                              {
-                                  Result = le.Result,
-                                  DoctorComment = le.DoctorComment,
-                                  OrderDate = le.OrderDate,
-                                  ExaminationDate = le.ExaminationDate,
-                                  Status = le.Status,
-                                  LabWorkerName = lw.Name,
-                                  LabWorkerLastname = lw.Lastname,
-                                  LabManagerName = lm.Name,
-                                  LabManagerLastname = lm.Lastname,
-                                  ApprovalRejectionDate = le.ApprovalRejectionDate
-                              }).ToList();
+            using var db = new DatabaseContext();
+            var result = (from le in db.LaboratoryExaminations
+                          join lw in db.LaboratoryWorkers on le.LaboratoryWorkerId equals lw.LaboratoryWorkerId
+                          join lm in db.LaboratoryManagers on le.LaboratoryManagerId equals lm.LaboratoryManagerId
+                          where le.Status == "Approval" || le.Status == "Rejected"
+                          select new ResolvedExaminationList
+                          {
+                              Result = le.Result,
+                              DoctorComment = le.DoctorComment,
+                              OrderDate = le.OrderDate,
+                              ExaminationDate = le.ExaminationDate,
+                              Status = le.Status,
+                              LabWorkerName = lw.Name,
+                              LabWorkerLastname = lw.Lastname,
+                              LabManagerName = lm.Name,
+                              LabManagerLastname = lm.Lastname,
+                              ApprovalRejectionDate = le.ApprovalRejectionDate
+                          }).ToList();
 
-                return JsonSerializer.Serialize<List<ResolvedExaminationList>>(result);
-            }
+            return JsonSerializer.Serialize<List<ResolvedExaminationList>>(result);
         }
     }
 }

@@ -27,94 +27,97 @@ namespace BackendProject.Controllers
     [Route("user/register")]
     public class UserRegisterController : ControllerBase
     {
-        public IActionResult Post(RegisterData input)
+        [AllowAnonymous]
+        [HttpPost]
+        public IActionResult Post([FromForm]RegisterData input)
         {
-            using (var db = new DatabaseContext())
-            {
-                // sprawdzenie czy istnieje
-                if (db.Users.SingleOrDefault(x => x.Login == input.Login) != null)
-                    return BadRequest();
-
-                if (input.Login != null &&
-                    input.Password != null &&
-                    input.Role != null &&
-                    input.Name != null &&
-                    input.Lastname != null &&
-                    (input.PWZNumber != null && input.PWZNumber.Length == 7 && input.PWZNumber.All(char.IsDigit)))
-                {
-                    var user = new User
-                    {
-                        Login = input.Login,
-                        Password = input.Password,
-                        Role = input.Role,
-                        DisabledTo = input.DisabledTo
-                    };
-
-                    if (input.Role != "RECP" && input.Role != "LABW" && input.Role != "LABM" && input.Role != "DOCT" && input.Role != "ADMN")
-                        return BadRequest(); // jesli zla rola
-
-                    db.Users.Add(user);
-                    db.SaveChanges(); // zapis usera do bazy
-                    var login_record = db.Users.Single(x => x.Login == input.Login); // tutaj jest record w ktorym jest id tego loginu
-
-                    switch (input.Role)
-                    {
-                        case "ADMN":
-                            Admin ad = new Admin
-                            {
-                                AdminId = login_record.UserId,
-                                Name = input.Name,
-                                Lastname = input.Lastname
-                            };
-                            db.Admins.Add(ad);
-                            break;
-
-                        case "RECP":
-                            Receptionist rec = new Receptionist
-                            {
-                                ReceptionistId = login_record.UserId,
-                                Name = input.Name,
-                                Lastname = input.Lastname
-                            };
-                            db.Receptionists.Add(rec);
-                            break;
-
-                        case "LABW":
-                            LaboratoryWorker lw = new LaboratoryWorker
-                            {
-                                LaboratoryWorkerId = login_record.UserId,
-                                Name = input.Name,
-                                Lastname = input.Lastname
-                            };
-                            db.LaboratoryWorkers.Add(lw);
-                            break;
-
-                        case "LABM":
-                            LaboratoryManager lm = new LaboratoryManager
-                            {
-                                LaboratoryManagerId = login_record.UserId,
-                                Name = input.Name,
-                                Lastname = input.Lastname
-                            };
-                            db.LaboratoryManagers.Add(lm);
-                            break;
-
-                        case "DOCT":
-                            Doctor doc = new Doctor
-                            {
-                                DoctorId = login_record.UserId,
-                                Name = input.Name,
-                                Lastname = input.Lastname,
-                                PWZNumber = input.PWZNumber
-                            };
-                            db.Doctors.Add(doc);
-                            break;
-                    }
-                    db.SaveChanges();
-                    return StatusCode(201); // Created
-                }
+            using var db = new DatabaseContext();
+            // sprawdzenie czy istnieje
+            if (db.Users.SingleOrDefault(x => x.Login == input.Login) != null)
                 return BadRequest();
+
+            if (input.Login != null &&
+                input.Password != null &&
+                input.Role != null &&
+                input.Name != null &&
+                input.Lastname != null &&
+                (input.PWZNumber != null && input.PWZNumber.Length == 7 && input.PWZNumber.All(char.IsDigit) ||
+                (input.PWZNumber == null && input.Role != "DOCT")))
+            {
+
+                var pw = new PasswordHelper();
+                var user = new User
+                {
+                    Login = input.Login,
+                    Password = pw.CreateHashedPassword(input.Password),
+                    Role = input.Role,
+                    DisabledTo = input.DisabledTo
+                };
+
+                if (input.Role != "RECP" && input.Role != "LABW" && input.Role != "LABM" && input.Role != "DOCT" && input.Role != "ADMN")
+                    return BadRequest(); // jesli zla rola
+
+                db.Users.Add(user);
+                db.SaveChanges(); // zapis usera do bazy
+                var login_record = db.Users.Single(x => x.Login == input.Login); // tutaj jest record w ktorym jest id tego loginu
+
+                switch (input.Role)
+                {
+                    case "ADMN":
+                        Admin ad = new Admin
+                        {
+                            AdminId = login_record.UserId,
+                            Name = input.Name,
+                            Lastname = input.Lastname
+                        };
+                        db.Admins.Add(ad);
+                        break;
+
+                    case "RECP":
+                        Receptionist rec = new Receptionist
+                        {
+                            ReceptionistId = login_record.UserId,
+                            Name = input.Name,
+                            Lastname = input.Lastname
+                        };
+                        db.Receptionists.Add(rec);
+                        break;
+
+                    case "LABW":
+                        LaboratoryWorker lw = new LaboratoryWorker
+                        {
+                            LaboratoryWorkerId = login_record.UserId,
+                            Name = input.Name,
+                            Lastname = input.Lastname
+                        };
+                        db.LaboratoryWorkers.Add(lw);
+                        break;
+
+                    case "LABM":
+                        LaboratoryManager lm = new LaboratoryManager
+                        {
+                            LaboratoryManagerId = login_record.UserId,
+                            Name = input.Name,
+                            Lastname = input.Lastname
+                        };
+                        db.LaboratoryManagers.Add(lm);
+                        break;
+
+                    case "DOCT":
+                        Doctor doc = new Doctor
+                        {
+                            DoctorId = login_record.UserId,
+                            Name = input.Name,
+                            Lastname = input.Lastname,
+                            PWZNumber = input.PWZNumber
+                        };
+                        db.Doctors.Add(doc);
+                        break;
+                }
+                db.SaveChanges();
+                return StatusCode(201); // Created
             }
+            return BadRequest("Bad luck");
         }
     }
 
@@ -134,17 +137,15 @@ namespace BackendProject.Controllers
             if (ndt.Login != null && ndt.NewDisableTime != null)
             {
                 // Biere login
-                using (var db = new DatabaseContext())
+                using var db = new DatabaseContext();
+                var user = db.Users.SingleOrDefault(x => x.Login == ndt.Login);
+                if (user != null)
                 {
-                    var user = db.Users.SingleOrDefault(x => x.Login == ndt.Login);
-                    if (user != null)
-                    {
-                        user.DisabledTo = ndt.NewDisableTime;
-                        db.SaveChanges();
-                        return Ok();
-                    }
-                    return NotFound();
+                    user.DisabledTo = ndt.NewDisableTime;
+                    db.SaveChanges();
+                    return Ok();
                 }
+                return NotFound();
             }
             return BadRequest();
         }
@@ -157,6 +158,7 @@ namespace BackendProject.Controllers
     }
     */
     [ApiController]
+    [Authorize]
     [Route("user")]
     public class ChangePasswordController : ControllerBase
     {
@@ -167,17 +169,18 @@ namespace BackendProject.Controllers
             if (input.Login != null && input.NewPassword != null)
             {
                 // Biere login
-                using (var db = new DatabaseContext())
+                using var db = new DatabaseContext();
+                var user = db.Users.SingleOrDefault(x => x.Login == input.Login);
+                if (user != null)
                 {
-                    var user = db.Users.SingleOrDefault(x => x.Login == input.Login);
-                    if (user != null)
-                    {
-                        user.Password = input.NewPassword;
-                        db.SaveChanges();
-                        return Ok();
-                    }
-                    return NotFound();
+                    var pw = new PasswordHelper();
+                    string newPassword = pw.CreateHashedPassword(input.NewPassword);
+
+                    user.Password = newPassword;
+                    db.SaveChanges();
+                    return Ok();
                 }
+                return NotFound();
             }
             return BadRequest();
         }
@@ -226,16 +229,20 @@ namespace BackendProject.Controllers
     [Route("user/authenticate")]
     public class LoginController : ControllerBase
     {
-        private IUserService _userService;
-        public LoginController(IUserService userService)
+        private readonly ILogger<LoginController> _logger;
+
+        public LoginController(ILogger<LoginController> logger, IUserService userService)
         {
+            _logger = logger;
             _userService = userService;
         }
+        private readonly IUserService _userService;
 
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Authenticate([FromForm]AuthenticateModel model)
         {
+            _logger.LogWarning("ERROR");
             var user = await _userService.Authenticate(model.Login, model.Password);
 
             if (user == null)

@@ -171,6 +171,7 @@ namespace BackendProject
         public string Login { get; set; }
         [Required]
         public string Password { get; set; }
+        public string Token { get; set; }
         [Required]
         public string Role { get; set; }
         public DateTime DisabledTo { get; set; }

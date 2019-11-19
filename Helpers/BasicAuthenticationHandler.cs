@@ -14,24 +14,27 @@ namespace BackendProject.Helpers
     public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
         private readonly IUserService _userService;
-
+        private readonly ILogger<BasicAuthenticationHandler> _logger;
         public BasicAuthenticationHandler(
             IOptionsMonitor<AuthenticationSchemeOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
             ISystemClock clock,
-            IUserService userService)
+            IUserService userService,
+            ILogger<BasicAuthenticationHandler> log)
             : base(options, logger, encoder, clock)
         {
             _userService = userService;
+            _logger = log;
         }
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
+            _logger.LogError("WITAM AUTENTYKACJE");
             if (!Request.Headers.ContainsKey("Authorization"))
                 return AuthenticateResult.Fail("Missing Authorization Header");
 
-            User user = null;
+            User user;
             try
             {
                 var authHeader = AuthenticationHeaderValue.Parse(Request.Headers["Authorization"]);
