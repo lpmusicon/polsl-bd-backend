@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-using Microsoft.EntityFrameworkCore;
 using BackendProject.Models;
 using Microsoft.AspNetCore.Authorization;
 
@@ -14,10 +13,10 @@ namespace BackendProject.Controllers
     {
         [HttpGet]
         [HttpGet("all")]
-        public string All()
+        [Authorize(Roles="RECP, DOCT")]
+        public List<Patient> All()
         {
-            using var db = new DatabaseContext();
-            return JsonSerializer.Serialize<DbSet<Patient>>(db.Patients);
+            return new DatabaseContext().Patients.ToList();
         }
 
         /*
@@ -40,7 +39,7 @@ namespace BackendProject.Controllers
             {
                 db.Patients.Add(input);
                 db.SaveChanges();
-                return StatusCode(201);
+                return NoContent();
             }
             return BadRequest();
         }

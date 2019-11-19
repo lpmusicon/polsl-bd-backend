@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using BackendProject.Models;
-
 namespace BackendProject.Helpers
 {
     public class AppSettings

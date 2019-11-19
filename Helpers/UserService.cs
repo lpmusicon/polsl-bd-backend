@@ -16,7 +16,6 @@ namespace BackendProject.Helpers
 
     public class UserService : IUserService
     {
-        // users hardcoded for simplicity, store in a db with hashed passwords in production applications
         private readonly DatabaseContext _db;
         private readonly AppSettings _appSettings;
 
@@ -25,18 +24,16 @@ namespace BackendProject.Helpers
             _appSettings = appSettings.Value;
         }
 
-        public async Task<User> Authenticate(string username, string password)
+        public async Task<User> Authenticate(string login, string password)
         {
-            var user = await Task.Run(() => _db.Users.SingleOrDefault(x => x.Login == username));
+            var user = await Task.Run(() => _db.Users.SingleOrDefault(x => x.Login == login));
             var pw = new PasswordHelper();
 
             if (user == null)
                 return null;
 
             if(!pw.CompareHashedPassword(user.Password, password))
-            {
                 return null;
-            }
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
@@ -50,13 +47,11 @@ namespace BackendProject.Helpers
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
+
             var token = tokenHandler.CreateToken(tokenDescriptor);
             user.Token = tokenHandler.WriteToken(token);
-
             
-            user.Password = null;
-            
-            return user;
+            return user.WithoutPassword();
         }
     }
 }

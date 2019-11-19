@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
-using System.Text.Json;
 using BackendProject.Models;
 using BackendProject.Helpers;
 
@@ -122,7 +121,7 @@ namespace BackendProject.Controllers
                         break;
                 }
                 db.SaveChanges();
-                return StatusCode(201); // Created
+                return NoContent(); // Created
             }
             return BadRequest("Bad luck");
         }
@@ -135,18 +134,18 @@ namespace BackendProject.Controllers
         */
         [HttpPost("{userId}/disable")]
         [Authorize(Roles="ADMN")]
-        public IActionResult Disable(ChangeDisableDate ndt)
+        public IActionResult Disable(int userId, DisableDateModel ndt)
         {
-            if (ndt.Login != null && ndt.NewDisableTime != null)
+            if (userId != 0 && ndt.DisableTime != null)
             {
                 // Biere login
                 using var db = new DatabaseContext();
-                var user = db.Users.SingleOrDefault(x => x.Login == ndt.Login);
+                var user = db.Users.SingleOrDefault(x => x.UserId == userId);
                 if (user != null)
                 {
-                    user.DisabledTo = ndt.NewDisableTime;
+                    user.DisabledTo = ndt.DisableTime;
                     db.SaveChanges();
-                    return Ok();
+                    return NoContent();
                 }
                 return NotFound();
             }
@@ -176,7 +175,7 @@ namespace BackendProject.Controllers
 
                     user.Password = newPassword;
                     db.SaveChanges();
-                    return Ok();
+                    return NoContent();
                 }
                 return NotFound();
             }
@@ -186,40 +185,30 @@ namespace BackendProject.Controllers
         [HttpGet]
         [HttpGet("all")]
         [Authorize(Roles="ADMN")]
-        public string All()
+        public List<User> All()
         {
-            var result = (from x in new DatabaseContext().Users
-                          select new GetUser
-                          {
-                              UserId = x.UserId,
-                              Login = x.Login,
-                              Role = x.Role,
-                              DisabledTo = x.DisabledTo
-                          }).ToList();
-
-            return JsonSerializer.Serialize<List<GetUser>>(result);
+            return new DatabaseContext().Users.WithoutPasswords().ToList();
         }
 
         [HttpGet("roles")]
         [Authorize(Roles="ADMN")]
-        public string Get()
+        public List<RoleModel> Get()
         {
-            List<Role> roles = new List<Role>() {
-                new Role { Mnemo = "ADMN", Name = "Administrator" },
-                new Role { Mnemo = "DOCT", Name = "Lekarz" },
-                new Role { Mnemo = "RECP", Name = "Recepcjonista" },
-                new Role { Mnemo = "LABW", Name = "Pracownik Laboratorium" },
-                new Role { Mnemo = "LABM", Name = "Kierownik Laboratorium" }
+            List<RoleModel> roles = new List<RoleModel>() {
+                new RoleModel { Mnemo = "ADMN", Name = "Administrator" },
+                new RoleModel { Mnemo = "DOCT", Name = "Lekarz" },
+                new RoleModel { Mnemo = "RECP", Name = "Recepcjonista" },
+                new RoleModel { Mnemo = "LABW", Name = "Pracownik Laboratorium" },
+                new RoleModel { Mnemo = "LABM", Name = "Kierownik Laboratorium" }
             };
 
-            return JsonSerializer.Serialize<List<Role>>(roles);
+            return roles;
         }
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
         public async Task<IActionResult> Authenticate([FromForm]AuthenticateModel model)
         {
-            _logger.LogWarning("ERROR");
             var user = await _userService.Authenticate(model.Login, model.Password);
 
             if (user == null)
