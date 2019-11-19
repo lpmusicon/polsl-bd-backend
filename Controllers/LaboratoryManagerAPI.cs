@@ -81,15 +81,14 @@ namespace BackendProject.Controllers
 
         /*
         {
-            "LaboratoryExaminationId": ,
             "LaboratoryManagerId": 
         }
         */
         [HttpPost("{LaboratoryExaminationId}/approval")]
-        public IActionResult Post(ExaminationApproval input)
+        public IActionResult Post(int LaboratoryExaminationId, ExaminationApproval input)
         {
             using var db = new DatabaseContext();
-            var ex = db.LaboratoryExaminations.SingleOrDefault(x => x.LaboratoryExaminationId == input.LaboratoryExaminationId);
+            var ex = db.LaboratoryExaminations.SingleOrDefault(x => x.LaboratoryExaminationId == LaboratoryExaminationId);
             if (ex != null && ex.Status == "Executed")
             {
                 ex.Status = "Approval";
@@ -103,16 +102,15 @@ namespace BackendProject.Controllers
 
         /*
         {
-            "LaboratoryExaminationId": ,
             "LaboratoryManagerId": ,
             "ManagerComment": ""
         }
         */
         [HttpPost("{LaboratoryExaminationId}/reject")]
-        public IActionResult Post(ExaminationReject input)
+        public IActionResult Post(int LaboratoryExaminationId, ExaminationReject input)
         {
             using var db = new DatabaseContext();
-            var ex = db.LaboratoryExaminations.SingleOrDefault(x => x.LaboratoryExaminationId == input.LaboratoryExaminationId);
+            var ex = db.LaboratoryExaminations.SingleOrDefault(x => x.LaboratoryExaminationId == LaboratoryExaminationId);
             if (ex != null && ex.Status == "Executed" && input.ManagerComment != null)
             {
                 ex.Status = "Rejected";
