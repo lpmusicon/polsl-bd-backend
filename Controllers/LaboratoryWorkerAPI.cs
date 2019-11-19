@@ -31,16 +31,15 @@ namespace BackendProject.Controllers
 
         /*
         {
-            "LaboratoryExaminationId": ,
             "Result": "",
             "LaboratoryWorkerId": 
         }
         */
         [HttpPost("{LaboratoryExaminationId}/execute")]
-        public IActionResult Post(ExaminationExecute input)
+        public IActionResult Post(int LaboratoryExaminationId, ExaminationExecute input)
         {
             using var db = new DatabaseContext();
-            var ex = db.LaboratoryExaminations.SingleOrDefault(x => x.LaboratoryExaminationId == input.LaboratoryExaminationId);
+            var ex = db.LaboratoryExaminations.SingleOrDefault(x => x.LaboratoryExaminationId == LaboratoryExaminationId);
             if (ex != null && input.Result != null)
             {
                 ex.Status = "Executed";
@@ -55,15 +54,14 @@ namespace BackendProject.Controllers
 
         /*
         {
-            "LaboratoryExaminationsId": ,
             "LaboratoryWorkerId": 
         }
         */
         [HttpPost("{LaboratoryExaminationId}/cancel")]
-        public IActionResult Post(int LaboratoryExaminationId, ExaminationCancel input)
+        public IActionResult Post(int LaboratoryExaminationsId, ExaminationCancel input)
         {
             using var db = new DatabaseContext();
-            var ex = db.LaboratoryExaminations.SingleOrDefault(x => x.LaboratoryExaminationId == input.LaboratoryExaminationsId);
+            var ex = db.LaboratoryExaminations.SingleOrDefault(x => x.LaboratoryExaminationId == LaboratoryExaminationsId);
             if (ex != null)
             {
                 ex.Status = "Canceled";

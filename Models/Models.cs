@@ -59,14 +59,12 @@ namespace BackendProject.Models
     // LaboratoryWorker Interfaces
     public class ExaminationExecute
     {
-        public int LaboratoryExaminationId { get; set; }
         public string Result { get; set; }
         public int LaboratoryWorkerId { get; set; }
     };
 
     public class ExaminationCancel
     {
-        public int LaboratoryExaminationsId { get; set; }
         public int LaboratoryWorkerId { get; set; }
     };
 
@@ -79,13 +77,11 @@ namespace BackendProject.Models
     // LaboratoryManager Interfaces
     public class ExaminationApproval
     {
-        public int LaboratoryExaminationId { get; set; }
         public int LaboratoryManagerId { get; set; }
     };
 
     public class ExaminationReject
     {
-        public int LaboratoryExaminationId { get; set; }
         public int LaboratoryManagerId { get; set; }
         public string ManagerComment { get; set; }
     };
