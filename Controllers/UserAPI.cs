@@ -276,16 +276,16 @@ namespace BackendProject.Controllers
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
-        public async Task<IActionResult> Authenticate([FromForm]AuthenticateModel model)
+        public async Task<IActionResult> Authenticate(AuthenticateModel model)
         {
             var user = await _userService.Authenticate(model.Login, model.Password);
 
             if (user == null)
                 return BadRequest(new { message = "Username or password is incorrect" });
-
-            if(user.DisabledTo < DateTime.Now)
+	
+            if(user.DisabledTo > DateTime.Now)
                 return BadRequest(new { message = "User is disabled" });
-                
+               
             return Ok(user);
         }
     }
