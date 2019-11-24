@@ -35,9 +35,8 @@ namespace BackendProject.Controllers
         }
         */
         [HttpPost("register")]
-        //[Authorize(Roles="ADMN")]
-	[AllowAnonymous]
-        public IActionResult Register([FromForm]RegisterData input)
+        [Authorize(Roles="ADMN")]
+        public IActionResult Register(RegisterData input)
         {
             using var db = new DatabaseContext();
             // sprawdzenie czy istnieje
@@ -164,6 +163,7 @@ namespace BackendProject.Controllers
         [Authorize(Roles="ADMN")]
         public IActionResult Password(int userId, ChangePassword input)
         {
+            _logger.LogDebug(input.NewPassword);
             if (userId != 0 && input.NewPassword != null)
             {
                 // Biere login

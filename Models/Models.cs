@@ -52,17 +52,10 @@ namespace BackendProject.Models
         public string Name { get; set; }
     };
 
-    public class DoctorsList
-    {
-        public int DoctorId { get; set; }
-        public string Name { get; set; }
-        public string Lastname { get; set; }
-    };
     // LaboratoryWorker Interfaces
     public class ExaminationExecute
     {
         public string Result { get; set; }
-        public int LaboratoryWorkerId { get; set; }
     };
 
     public class ExaminationCancel
@@ -70,12 +63,6 @@ namespace BackendProject.Models
         public int LaboratoryWorkerId { get; set; }
     };
 
-    public class OrderedExaminationList
-    {
-        public string DoctorComment { get; set; }
-        public string LaboratoryExaminatonName { get; set; }
-        public DateTime OrderDate { get; set; }
-    };
     // LaboratoryManager Interfaces
     public class ExaminationApproval
     {
@@ -88,29 +75,9 @@ namespace BackendProject.Models
         public string ManagerComment { get; set; }
     };
 
-    public class ExecutedExaminationList
-    {
-        public string Result { get; set; }
-        public string DoctorComment { get; set; }
-        public DateTime OrderDate { get; set; }
-        public DateTime? ExaminationDate { get; set; }
-        public string Status { get; set; }
-        public string LabWorkerName { get; set; }
-        public string LabWorkerLastname { get; set; }
-    };
-
-    public class ResolvedExaminationList : ExecutedExaminationList
-    {
-        public string LabManagerName { get; set; }
-        public string LabManagerLastname { get; set; }
-        public DateTime? ApprovalRejectionDate { get; set; }
-    };
-
     // Doctor Interfaces
     public class PatientVisitForm
     {
-        public int PatientVisitId { get; set; }
-        public int DoctorId { get; set; } // to dlatego ze mozna podmieniac doktorow w wizycie, rowniez do sprawdzenia, narazie samowolka jak w latach 90-tych
         public string Description { get; set; }
         public string Diagnosis { get; set; }
     };
@@ -139,16 +106,7 @@ namespace BackendProject.Models
         public DateTime? CloseDate { get; set; }
     };
 
-    public class LaboratoryExaminationList
-    {
-        public string Result { get; set; }
-        public string DoctorComment { get; set; }
-        public DateTime? ExaminationDate { get; set; }
-        public string ManagerComment { get; set; }
-        public string Status { get; set; }
-        public string ExaminationName { get; set; }
-
-    };
+    
     public class PhysicalExaminationList
     {
         public string Result { get; set; }
@@ -158,8 +116,9 @@ namespace BackendProject.Models
 
     public class ExaminationsDictionaryList
     {
-        public int ExaminationDictionaryId { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
+        public string Type { get; set; }
     };
 
     public struct VisitCancelModel
