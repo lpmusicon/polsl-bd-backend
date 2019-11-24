@@ -57,7 +57,6 @@ namespace BackendProject
         public string Name { get; set; }
         [Required]
         public string Lastname { get; set; }
-
         public ICollection<PatientVisit> RegisteredVisits { get; set; } // relacja 1 do N
     }
 
@@ -71,7 +70,6 @@ namespace BackendProject
         public string Lastname { get; set; }
         [Required]
         public string PWZNumber { get; set; }
-
         public ICollection<PatientVisit> PerformedVisits { get; set; } // relacja 1 do N
     }
 
@@ -83,7 +81,6 @@ namespace BackendProject
         public string Name { get; set; }
         [Required]
         public string Lastname { get; set; }
-
         public ICollection<LaboratoryExamination> PerformedExaminations { get; set; } // relacja 1 do N
     }
 
@@ -95,7 +92,6 @@ namespace BackendProject
         public string Name { get; set; }
         [Required]
         public string Lastname { get; set; }
-
         public ICollection<LaboratoryExamination> CheckedExaminations { get; set; } // relacja 1 do N
     }
 
@@ -106,7 +102,6 @@ namespace BackendProject
         public char Type { get; set; } // Fizykalne/Laboratoryjne
         [Required]
         public string Name { get; set; }
-
         public ICollection<PhysicalExamination> PhysicalExaminations { get; set; } // relacja 1 do N
         public ICollection<LaboratoryExamination> LaboratoryExaminations { get; set; } // relacja 1 do N
     }
@@ -116,7 +111,6 @@ namespace BackendProject
         public int PhysicalExaminationId { get; set; }
         [Required]
         public string Result { get; set; }
-
         public int PatientVisitId { get; set; }
         public PatientVisit PatientVisit { get; set; }
         public int ExaminationDictionaryId { get; set; }
@@ -153,14 +147,12 @@ namespace BackendProject
         public string Status { get; set; }
         public DateTime RegisterDate { get; set; }
         public DateTime? CloseDate { get; set; } // data zamkniecia wizyty
-
         public int ReceptionistId { get; set; }
         public Receptionist Receptionist { get; set; }
         public int PatientId { get; set; }
         public Patient Patient { get; set; }
         public int DoctorId { get; set; }
         public Doctor Doctor { get; set; }
-
         public ICollection<LaboratoryExamination> OrderedExaminations { get; set; } // relacja 1 do N
     }
 

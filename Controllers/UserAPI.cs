@@ -132,7 +132,7 @@ namespace BackendProject.Controllers
             "NewDisableTime": ""
         }
         */
-        [HttpPost("{userId}/disable")]
+        [HttpPatch("{userId}/disable")]
         [Authorize(Roles="ADMN")]
         public IActionResult Disable(int userId, DisableDateModel ndt)
         {
@@ -160,14 +160,13 @@ namespace BackendProject.Controllers
         */
         [HttpPatch("{userId}/passwd")]
         [Authorize(Roles="ADMN")]
-        public IActionResult Password(ChangePassword input)
+        public IActionResult Password(int userId, ChangePassword input)
         {
-
-            if (input.Login != null && input.NewPassword != null)
+            if (userId != 0 && input.NewPassword != null)
             {
                 // Biere login
                 using var db = new DatabaseContext();
-                var user = db.Users.SingleOrDefault(x => x.Login == input.Login);
+                var user = db.Users.SingleOrDefault(x => x.UserId == userId);
                 if (user != null)
                 {
                     var pw = new PasswordHelper();
@@ -207,7 +206,7 @@ namespace BackendProject.Controllers
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
-        public async Task<IActionResult> Authenticate([FromForm]AuthenticateModel model)
+        public async Task<IActionResult> Authenticate(AuthenticateModel model)
         {
             var user = await _userService.Authenticate(model.Login, model.Password);
 
