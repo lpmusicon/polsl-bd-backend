@@ -35,8 +35,7 @@ namespace BackendProject.Controllers
         }
         */
         [HttpPost("register")]
-        //[Authorize(Roles="ADMN")]
-	[AllowAnonymous]
+        [Authorize(Roles="ADMN")]
         public IActionResult Register([FromForm]RegisterData input)
         {
             using var db = new DatabaseContext();
@@ -165,6 +164,8 @@ namespace BackendProject.Controllers
         public IActionResult Password(int userId, ChangePassword input)
         {
             if (userId != 0 && input.NewPassword != null)
+            _logger.LogDebug(input.NewPassword);
+            _logger.LogDebug(userId.ToString());
             {
                 // Biere login
                 using var db = new DatabaseContext();
