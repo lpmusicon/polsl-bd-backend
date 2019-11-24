@@ -165,6 +165,8 @@ namespace BackendProject.Controllers
         {
             _logger.LogDebug(input.NewPassword);
             if (userId != 0 && input.NewPassword != null)
+            _logger.LogDebug(input.NewPassword);
+            _logger.LogDebug(userId.ToString());
             {
                 // Biere login
                 using var db = new DatabaseContext();
