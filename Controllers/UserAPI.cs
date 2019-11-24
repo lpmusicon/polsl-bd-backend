@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using BackendProject.Models;
 using BackendProject.Helpers;
+using System;
 
 namespace BackendProject.Controllers
 {
@@ -34,7 +35,8 @@ namespace BackendProject.Controllers
         }
         */
         [HttpPost("register")]
-        [Authorize(Roles="ADMN")]
+        //[Authorize(Roles="ADMN")]
+	[AllowAnonymous]
         public IActionResult Register([FromForm]RegisterData input)
         {
             using var db = new DatabaseContext();
@@ -184,9 +186,77 @@ namespace BackendProject.Controllers
         [HttpGet]
         [HttpGet("all")]
         [Authorize(Roles="ADMN")]
-        public List<User> All()
+        public List<GetUser> All()
         {
-            return new DatabaseContext().Users.WithoutPasswords().ToList();
+            using var db = new DatabaseContext();
+
+            List<GetUser> UsersList = new List<GetUser>();
+            var recp = (from u in db.Users
+                          join r in db.Receptionists on u.UserId equals r.ReceptionistId
+                          select new GetUser
+                          {
+                              UserId = u.UserId,
+                              Login = u.Login,
+                              Name = r.Name,
+                              Lastname = r.Lastname,
+                              Role = u.Role,
+                              DisabledTo = u.DisabledTo
+                          }).ToList();
+            foreach(GetUser item in recp) UsersList.Add(item);
+
+            var doct = (from u in db.Users
+                          join d in db.Doctors on u.UserId equals d.DoctorId
+                          select new GetUser
+                          {
+                              UserId = u.UserId,
+                              Login = u.Login,
+                              Name = d.Name,
+                              Lastname = d.Lastname,
+                              Role = u.Role,
+                              DisabledTo = u.DisabledTo
+                          }).ToList();
+            foreach(GetUser item in doct) UsersList.Add(item);
+
+            var labw = (from u in db.Users
+                          join lw in db.LaboratoryWorkers on u.UserId equals lw.LaboratoryWorkerId
+                          select new GetUser
+                          {
+                              UserId = u.UserId,
+                              Login = u.Login,
+                              Name = lw.Name,
+                              Lastname = lw.Lastname,
+                              Role = u.Role,
+                              DisabledTo = u.DisabledTo
+                          }).ToList();
+            foreach(GetUser item in labw) UsersList.Add(item);
+
+            var labm = (from u in db.Users
+                          join lm in db.LaboratoryManagers on u.UserId equals lm.LaboratoryManagerId
+                          select new GetUser
+                          {
+                              UserId = u.UserId,
+                              Login = u.Login,
+                              Name = lm.Name,
+                              Lastname = lm.Lastname,
+                              Role = u.Role,
+                              DisabledTo = u.DisabledTo
+                          }).ToList();
+            foreach(GetUser item in labm) UsersList.Add(item);
+
+            var admn = (from u in db.Users
+                          join a in db.Admins on u.UserId equals a.AdminId
+                          select new GetUser
+                          {
+                              UserId = u.UserId,
+                              Login = u.Login,
+                              Name = a.Name,
+                              Lastname = a.Lastname,
+                              Role = u.Role,
+                              DisabledTo = u.DisabledTo
+                          }).ToList();
+            foreach(GetUser item in admn) UsersList.Add(item);
+            
+            return UsersList;
         }
 
         [HttpGet("roles")]
@@ -212,7 +282,10 @@ namespace BackendProject.Controllers
 
             if (user == null)
                 return BadRequest(new { message = "Username or password is incorrect" });
-
+	
+            if(user.DisabledTo > DateTime.Now)
+                return BadRequest(new { message = "User is disabled" });
+               
             return Ok(user);
         }
     }
