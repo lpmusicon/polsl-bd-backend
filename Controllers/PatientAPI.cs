@@ -53,7 +53,7 @@ namespace BackendProject.Controllers
         [HttpGet("{patientId}/visit")]
         [HttpGet("{patientId}/visit/all")]
         [Authorize(Roles = "RECP, DOCT")]
-        public List<PatientVisitsList> Visits(int patientId)
+        public List<PatientVisitsModel> Visits(int patientId)
         {
             using var db = new DatabaseContext();
             var result = (
@@ -61,19 +61,24 @@ namespace BackendProject.Controllers
                 join pv in db.PatientVisits on p.PatientId equals pv.PatientId
                 join d in db.Doctors on pv.DoctorId equals d.DoctorId
                 where pv.PatientId == patientId
-                select new PatientVisitsList
+                select new PatientVisitsModel
                 {
-                    PatientName = p.Name,
-                    PatientLastname = p.Lastname,
+                    Patient = new PatientModel() {
+                        Id = p.PatientId,
+                        Name = p.Name,
+                        Lastname = p.Lastname
+                    },
                     RegisterDate = pv.RegisterDate,
                     PatientVisitId = pv.PatientVisitId,
                     CloseDate = pv.CloseDate,
                     Description = pv.Description,
                     Diagnosis = pv.Diagnosis,
-                    DoctorName = d.Name,
-                    DoctorLastname = d.Lastname,
-                    Status = pv.Status,
-                    PatientId = patientId
+                    Doctor = new DoctorModel() {
+                        Id = d.DoctorId,
+                        Name = d.Name,
+                        Lastname = d.Lastname
+                    },
+                    Status = pv.Status
                 }).ToList();
 
             return result;

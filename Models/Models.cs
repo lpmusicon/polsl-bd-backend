@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 namespace BackendProject.Models
 {
     // User Interfaces
-    public class RegisterData
+    public class RegisterModel
     {
         [Required]
         public string Login { get; set; }
@@ -30,13 +30,12 @@ namespace BackendProject.Models
         public DateTime DisableTime { get; set; }
     };
 
-    public class ChangePassword
+    public class PasswordModel
     {
-        public string Login { get; set; }
         public string NewPassword { get; set; }
     };
 
-    public class GetUser
+    public class UserModel
     {
         public int UserId { get; set; }
         public string Login { get; set; }
@@ -53,51 +52,35 @@ namespace BackendProject.Models
     };
 
     // LaboratoryWorker Interfaces
-    public class ExaminationExecute
+    public class ResultModel
     {
         public string Result { get; set; }
     };
 
-    public class ExaminationCancel
+    public struct ReasonModel
     {
-        public int LaboratoryWorkerId { get; set; }
-    };
-
-    // LaboratoryManager Interfaces
-    public class ExaminationApproval
-    {
-        public int LaboratoryManagerId { get; set; }
-    };
-
-    public class ExaminationReject
-    {
-        public int LaboratoryManagerId { get; set; }
-        public string ManagerComment { get; set; }
-    };
+        public string Reason { get; set; }
+    }
 
     // Doctor Interfaces
-    public class PatientVisitForm
+    public class PatientVisitModel
     {
         public string Description { get; set; }
         public string Diagnosis { get; set; }
     };
 
-    public class PatientsVisitsList
+    public class PatientsVisitsModel
     {
-        public int PatientId { get; set; }
-        public string PatientName { get; set; }
-        public string PatientLastname { get; set; }
+        public PatientModel Patient { get; set; }
         public DateTime RegisterDate { get; set; }
 
     };
-    public class AllPatientsVisitsList : PatientsVisitsList
+    public class AllPatientsVisitsModel : PatientsVisitsModel
     {
-        public string DoctorName { get; set; }
-        public string DoctorLastname { get; set; }
-
+        public DoctorModel Doctor { get; set; }
     };
 
-    public class PatientVisitsList : AllPatientsVisitsList
+    public class PatientVisitsModel : AllPatientsVisitsModel
     {
         public int PatientVisitId { get; set; }
         public string Description { get; set; }
@@ -105,26 +88,6 @@ namespace BackendProject.Models
         public string Status { get; set; }
         public DateTime? CloseDate { get; set; }
     };
-
-    
-    public class PhysicalExaminationList
-    {
-        public string Result { get; set; }
-        public string ExaminationName { get; set; }
-
-    };
-
-    public class ExaminationsDictionaryList
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Type { get; set; }
-    };
-
-    public struct VisitCancelModel
-    {
-        public string Reason { get; set; }
-    }
 
     public class AuthenticateModel
     {

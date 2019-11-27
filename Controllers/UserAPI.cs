@@ -36,7 +36,7 @@ namespace BackendProject.Controllers
         */
         [HttpPost("register")]
         [Authorize(Roles="ADMN")]
-        public IActionResult Register(RegisterData input)
+        public IActionResult Register(RegisterModel input)
         {
             using var db = new DatabaseContext();
             // sprawdzenie czy istnieje
@@ -161,12 +161,9 @@ namespace BackendProject.Controllers
         */
         [HttpPatch("{userId}/passwd")]
         [Authorize(Roles="ADMN")]
-        public IActionResult Password(int userId, ChangePassword input)
+        public IActionResult Password(int userId, PasswordModel input)
         {
-            _logger.LogDebug(input.NewPassword);
             if (userId != 0 && input.NewPassword != null)
-            _logger.LogDebug(input.NewPassword);
-            _logger.LogDebug(userId.ToString());
             {
                 // Biere login
                 using var db = new DatabaseContext();
@@ -188,14 +185,14 @@ namespace BackendProject.Controllers
         [HttpGet]
         [HttpGet("all")]
         [Authorize(Roles="ADMN")]
-        public List<GetUser> All()
+        public List<UserModel> All()
         {
             using var db = new DatabaseContext();
 
-            List<GetUser> UsersList = new List<GetUser>();
+            List<UserModel> UsersList = new List<UserModel>();
             var recp = (from u in db.Users
                           join r in db.Receptionists on u.UserId equals r.ReceptionistId
-                          select new GetUser
+                          select new UserModel
                           {
                               UserId = u.UserId,
                               Login = u.Login,
@@ -204,11 +201,11 @@ namespace BackendProject.Controllers
                               Role = u.Role,
                               DisabledTo = u.DisabledTo
                           }).ToList();
-            foreach(GetUser item in recp) UsersList.Add(item);
+            foreach(UserModel item in recp) UsersList.Add(item);
 
             var doct = (from u in db.Users
                           join d in db.Doctors on u.UserId equals d.DoctorId
-                          select new GetUser
+                          select new UserModel
                           {
                               UserId = u.UserId,
                               Login = u.Login,
@@ -217,11 +214,11 @@ namespace BackendProject.Controllers
                               Role = u.Role,
                               DisabledTo = u.DisabledTo
                           }).ToList();
-            foreach(GetUser item in doct) UsersList.Add(item);
+            foreach(UserModel item in doct) UsersList.Add(item);
 
             var labw = (from u in db.Users
                           join lw in db.LaboratoryWorkers on u.UserId equals lw.LaboratoryWorkerId
-                          select new GetUser
+                          select new UserModel
                           {
                               UserId = u.UserId,
                               Login = u.Login,
@@ -230,11 +227,11 @@ namespace BackendProject.Controllers
                               Role = u.Role,
                               DisabledTo = u.DisabledTo
                           }).ToList();
-            foreach(GetUser item in labw) UsersList.Add(item);
+            foreach(UserModel item in labw) UsersList.Add(item);
 
             var labm = (from u in db.Users
                           join lm in db.LaboratoryManagers on u.UserId equals lm.LaboratoryManagerId
-                          select new GetUser
+                          select new UserModel
                           {
                               UserId = u.UserId,
                               Login = u.Login,
@@ -243,11 +240,11 @@ namespace BackendProject.Controllers
                               Role = u.Role,
                               DisabledTo = u.DisabledTo
                           }).ToList();
-            foreach(GetUser item in labm) UsersList.Add(item);
+            foreach(UserModel item in labm) UsersList.Add(item);
 
             var admn = (from u in db.Users
                           join a in db.Admins on u.UserId equals a.AdminId
-                          select new GetUser
+                          select new UserModel
                           {
                               UserId = u.UserId,
                               Login = u.Login,
@@ -256,7 +253,7 @@ namespace BackendProject.Controllers
                               Role = u.Role,
                               DisabledTo = u.DisabledTo
                           }).ToList();
-            foreach(GetUser item in admn) UsersList.Add(item);
+            foreach(UserModel item in admn) UsersList.Add(item);
             
             return UsersList;
         }

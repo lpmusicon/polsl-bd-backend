@@ -22,41 +22,51 @@ namespace BackendProject.Controllers
             var result = (from p in db.Patients
                           join pv in db.PatientVisits on p.PatientId equals pv.PatientId
                           join d in db.Doctors on pv.DoctorId equals d.DoctorId
-                          select new PatientVisitsList
+                          select new PatientVisitsModel
                           {
-                              PatientName = p.Name,
-                              PatientLastname = p.Lastname,
+                              Patient = new PatientModel() {
+                                  Id = p.PatientId,
+                                  Name = p.Name,
+                                  Lastname = p.Lastname
+                              },
+                              Doctor = new DoctorModel() {
+                                  Id = d.DoctorId,
+                                  Name = d.Name,
+                                  Lastname = d.Lastname
+                              },
                               RegisterDate = pv.RegisterDate,
                               PatientVisitId = pv.PatientVisitId,
                               CloseDate = pv.CloseDate,
                               Description = pv.Description,
                               Diagnosis = pv.Diagnosis,
-                              DoctorName = d.Name,
-                              DoctorLastname = d.Lastname,
-                              Status = pv.Status,
-                              PatientId = pv.PatientId
+                              Status = pv.Status
                           }).ToList();
 
-            return JsonSerializer.Serialize<List<PatientVisitsList>>(result);
+            return JsonSerializer.Serialize<List<PatientVisitsModel>>(result);
         }
 
         [HttpGet("registered")]
         [HttpGet("registered/all")]
-        public List<AllPatientsVisitsList> AllRegistered()
+        public List<AllPatientsVisitsModel> AllRegistered()
         {
             using var db = new DatabaseContext();
             var result = (from p in db.Patients
                           join pv in db.PatientVisits on p.PatientId equals pv.PatientId
                           join d in db.Doctors on pv.DoctorId equals d.DoctorId
                           where pv.Status == "Registered"
-                          select new AllPatientsVisitsList
+                          select new AllPatientsVisitsModel
                           {
-                              DoctorName = d.Name,
-                              DoctorLastname = d.Lastname,
-                              PatientName = p.Name,
-                              PatientLastname = p.Lastname,
-                              RegisterDate = pv.RegisterDate,
-                              PatientId = pv.PatientId
+                              Doctor = new DoctorModel() {
+                                  Id = d.DoctorId,
+                                  Name = d.Name,
+                                  Lastname = d.Lastname
+                              },
+                              Patient = new PatientModel() {
+                                  Id = p.PatientId,
+                                  Name = p.Name,
+                                  Lastname = p.Lastname
+                              },
+                              RegisterDate = pv.RegisterDate
                           }).ToList();
 
             return result;
@@ -96,7 +106,7 @@ namespace BackendProject.Controllers
         }
         */
         [HttpPost("{visitId}/cancel")]
-        public IActionResult Cancel(int visitId, VisitCancelModel formData)
+        public IActionResult Cancel(int visitId, ReasonModel formData)
         {
             using var db = new DatabaseContext();
             // anuluje tylko swoje wizyty? jesli tak, dopisz cos, teraz moze anulowac wszystko (Kononowicz mode)
@@ -123,7 +133,7 @@ namespace BackendProject.Controllers
         */
         [HttpPost("{visitId}/close")]
         [Authorize(Roles = "DOCT")]
-        public IActionResult Close(int visitId, PatientVisitForm input)
+        public IActionResult Close(int visitId, PatientVisitModel input)
         {
             var uid = int.Parse(UserId);
             bool isInputValid = visitId != 0 && uid != 0 && input.Description != null && input.Diagnosis != null;

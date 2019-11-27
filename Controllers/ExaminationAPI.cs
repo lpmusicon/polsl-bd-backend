@@ -235,7 +235,7 @@ namespace BackendProject.Controllers
         */
         [HttpPost("laboratory/{examinationId}/do")]
         [Authorize(Roles = "LABW")]
-        public IActionResult LaboratoryDo(int examinationId, ExaminationExecute input)
+        public IActionResult LaboratoryDo(int examinationId, ResultModel input)
         {
             var uid = int.Parse(UserId);
             using var db = new DatabaseContext();
@@ -259,13 +259,14 @@ namespace BackendProject.Controllers
         */
         [HttpPost("laboratory/{examinationId}/abort")]
         [Authorize(Roles = "LABW")]
-        public IActionResult LaboratoryAbort(int examinationId, ExaminationCancel input)
+        public IActionResult LaboratoryAbort(int examinationId, ReasonModel input)
         {
             var uid = int.Parse(UserId);
             using var db = new DatabaseContext();
             var ex = db.LaboratoryExaminations.SingleOrDefault(x => x.LaboratoryExaminationId == examinationId);
             if (ex != null)
             {
+                ex.ManagerComment = input.Reason;
                 ex.Status = "Canceled";
                 ex.ExaminationDate = DateTime.Now;
                 ex.LaboratoryWorkerId = uid;
@@ -277,13 +278,14 @@ namespace BackendProject.Controllers
 
         [HttpPost("laboratory/{examinationId}/approve")]
         [Authorize(Roles = "LABM")]
-        public IActionResult Approve(int examinationId, ExaminationApproval input)
+        public IActionResult Approve(int examinationId, ReasonModel input)
         {
             var uid = int.Parse(UserId);
             using var db = new DatabaseContext();
             var ex = db.LaboratoryExaminations.SingleOrDefault(x => x.LaboratoryExaminationId == examinationId);
             if (ex != null && ex.Status == "Executed")
             {
+                ex.ManagerComment = input.Reason;
                 ex.Status = "Approval";
                 ex.ApprovalRejectionDate = DateTime.Now;
                 ex.LaboratoryManagerId = uid;
@@ -295,16 +297,16 @@ namespace BackendProject.Controllers
 
         [HttpPost("laboratory/{examinationId}/reject")]
         [Authorize(Roles = "LABM")]
-        public IActionResult Reject(int examinationId, ExaminationReject input)
+        public IActionResult Reject(int examinationId, ReasonModel input)
         {
             var uid = int.Parse(UserId);
             using var db = new DatabaseContext();
             var ex = db.LaboratoryExaminations.SingleOrDefault(x => x.LaboratoryExaminationId == examinationId);
-            if (ex != null && ex.Status == "Executed" && input.ManagerComment != null)
+            if (ex != null && ex.Status == "Executed" && input.Reason != null)
             {
                 ex.Status = "Rejected";
                 ex.ApprovalRejectionDate = DateTime.Now;
-                ex.ManagerComment = input.ManagerComment;
+                ex.ManagerComment = input.Reason;
                 ex.LaboratoryManagerId = uid;
                 db.SaveChanges();
                 return Ok();
