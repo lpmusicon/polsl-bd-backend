@@ -69,4 +69,13 @@ namespace BackendProject.Models.Laboratory
         public string Status { get; set; }
         public string ExaminationName { get; set; }
     };
+
+    public class OrderExaminationModel
+    {
+        public int Id { get; set; }
+        public int VisitId { get; set; }
+        public int ExaminationTypeId { get; set; }
+        public string DoctorComment { get; set; }
+        
+    }
 }

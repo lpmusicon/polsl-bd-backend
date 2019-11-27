@@ -151,7 +151,7 @@ namespace BackendProject.Controllers
                           select new Ordered
                           {
                               Id = le.LaboratoryExaminationId,
-                              LaboratoryExaminatonName = ed.Name,
+                              LaboratoryExaminationName = ed.Name,
                               DoctorComment = le.DoctorComment,
                               OrderDate = le.OrderDate,
                           }).ToList();
@@ -212,15 +212,20 @@ namespace BackendProject.Controllers
         }
         */
         [HttpPost("laboratory/order")]
-        public IActionResult Order(LaboratoryExamination input)
+        public IActionResult Order(OrderExaminationModel input)
         {
             using var db = new DatabaseContext();
-            var pecheck = db.ExaminationsDictionary.SingleOrDefault(x => x.ExaminationDictionaryId == input.ExaminationDictionaryId);
-            if (input.LaboratoryExaminationId == 0 && db.PatientVisits.SingleOrDefault(x => x.PatientVisitId == input.PatientVisitId) != null && pecheck.Type == 'L' &&
-            input.ManagerComment == null && input.ApprovalRejectionDate == null && input.Result == null)
+            var pecheck = db.ExaminationsDictionary.SingleOrDefault(x => x.ExaminationDictionaryId == input.ExaminationTypeId);
+            if (db.PatientVisits.SingleOrDefault(x => x.PatientVisitId == input.VisitId) != null && pecheck.Type == 'L')
             {
-                input.OrderDate = DateTime.Now;
-                input.Status = "Ordered";
+                var Examination = new LaboratoryExamination() {
+                    PatientVisitId = input.VisitId,
+                    DoctorComment = input.DoctorComment,
+                    OrderDate = DateTime.Now,
+                    Status = "Ordered",
+                    ExaminationDictionaryId = input.ExaminationTypeId
+
+                };
                 db.Add(input);
                 db.SaveChanges();
                 return Ok();
