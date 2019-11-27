@@ -56,6 +56,7 @@ namespace BackendProject.Controllers
                           where pv.Status == "Registered"
                           select new AllPatientsVisitsModel
                           {
+                              Id = pv.PatientVisitId,
                               Doctor = new DoctorModel() {
                                   Id = d.DoctorId,
                                   Name = d.Name,
@@ -68,8 +69,20 @@ namespace BackendProject.Controllers
                               },
                               RegisterDate = pv.RegisterDate
                           }).ToList();
-
             return result;
+        }
+
+        [HttpGet("{visitId}")]
+        public VisitModel Visit(int visitId)
+        {
+            using var db = new DatabaseContext();
+            var visit = db.PatientVisits.SingleOrDefault(x => x.PatientVisitId == visitId);
+            if(visit == null) return new VisitModel();
+            return new VisitModel() {
+                Id = visit.PatientVisitId,
+                RegisterDate = visit.RegisterDate,
+                Patient = new PatientModel() {}
+            };
         }
 
         /*
@@ -98,7 +111,7 @@ namespace BackendProject.Controllers
             }
             return BadRequest();
         }
-
+        
         /* 
         {
             "PatientVisitId": , 

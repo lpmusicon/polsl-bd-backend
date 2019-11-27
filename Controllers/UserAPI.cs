@@ -260,7 +260,7 @@ namespace BackendProject.Controllers
 
         [HttpGet("roles")]
         [Authorize(Roles="ADMN")]
-        public List<RoleModel> Get()
+        public List<RoleModel> Roles()
         {
             List<RoleModel> roles = new List<RoleModel>() {
                 new RoleModel { Mnemo = "ADMN", Name = "Administrator" },

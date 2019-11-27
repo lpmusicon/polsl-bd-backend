@@ -55,7 +55,7 @@ namespace BackendProject.Models.Laboratory
     {
         public int Id { get; set; }
         public string DoctorComment { get; set; }
-        public string LaboratoryExaminatonName { get; set; }
+        public string LaboratoryExaminationName { get; set; }
         public DateTime OrderDate { get; set; }
     };
 
@@ -76,6 +76,6 @@ namespace BackendProject.Models.Laboratory
         public int VisitId { get; set; }
         public int ExaminationTypeId { get; set; }
         public string DoctorComment { get; set; }
-        
+
     }
 }

@@ -71,6 +71,7 @@ namespace BackendProject.Models
 
     public class PatientsVisitsModel
     {
+        public int Id { get; set; }
         public PatientModel Patient { get; set; }
         public DateTime RegisterDate { get; set; }
 
