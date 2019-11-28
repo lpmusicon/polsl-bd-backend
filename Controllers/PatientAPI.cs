@@ -83,5 +83,54 @@ namespace BackendProject.Controllers
 
             return result;
         }
+
+        [HttpGet("{patientId}/PhysicalExaminations/all")]
+        [Authorize(Roles = "DOCT")]
+        public List<PatientPhysicalExaminationsModel> PatientPhysicalExaminations(int patientId)
+        {
+            using var db = new DatabaseContext();
+            var result = (
+                from p in db.Patients
+                join pv in db.PatientVisits on p.PatientId equals pv.PatientId
+                join pe in db.PhysicalExaminations on pv.PatientVisitId equals pe.PatientVisitId
+                join ed in db.ExaminationsDictionary on pe.ExaminationDictionaryId equals ed.ExaminationDictionaryId
+                join d in db.Doctors on pv.DoctorId equals d.DoctorId
+                where pv.PatientId == patientId
+                select new PatientPhysicalExaminationsModel
+                {
+                    ExaminationName = ed.Name,
+                    Result = pe.Result,
+                    DoctorName = d.Name,
+                    DoctorLastName = d.Lastname,
+                    ExaminationDate = pv.CloseDate
+                }).ToList();
+
+            return result;
+        }
+
+        [HttpGet("{patientId}/LaboratoryExaminations/all")]
+        [Authorize(Roles = "DOCT")]
+        public List<PatientLaboratoryExaminationsModel> PatientLaboratoryExaminations(int patientId)
+        {
+            using var db = new DatabaseContext();
+            var result = (
+                from p in db.Patients
+                join pv in db.PatientVisits on p.PatientId equals pv.PatientId
+                join le in db.LaboratoryExaminations on pv.PatientVisitId equals le.PatientVisitId
+                join ed in db.ExaminationsDictionary on le.ExaminationDictionaryId equals ed.ExaminationDictionaryId
+                join d in db.Doctors on pv.DoctorId equals d.DoctorId
+                where pv.PatientId == patientId
+                select new PatientLaboratoryExaminationsModel
+                {
+                    ExaminationName = ed.Name,
+                    Result = le.Result,
+                    DoctorName = d.Name,
+                    DoctorLastName = d.Lastname,
+                    OrderExaminationDate = le.OrderDate,
+                    ExecuteExaminationDate = le.ExaminationDate
+                }).ToList();
+
+            return result;
+        }
     }
 }

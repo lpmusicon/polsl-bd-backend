@@ -98,4 +98,21 @@ namespace BackendProject.Models
         [Required]
         public string Password { get; set; }
     }
+
+    public class PatientLaboratoryExaminationsModel{
+        public string ExaminationName { get; set; }
+        public string Result { get; set; }
+        public string DoctorName { get; set; }
+        public string DoctorLastName { get; set; }
+        public DateTime OrderExaminationDate { get; set; }
+        public DateTime? ExecuteExaminationDate { get; set; }
+    }
+
+    public class PatientPhysicalExaminationsModel{
+        public string ExaminationName { get; set; }
+        public string Result { get; set; }
+        public string DoctorName { get; set; }
+        public string DoctorLastName { get; set; }
+        public DateTime? ExaminationDate { get; set; }
+    }
 }
