@@ -72,10 +72,8 @@ namespace BackendProject.Models.Laboratory
 
     public class OrderExaminationModel
     {
-        public int Id { get; set; }
         public int VisitId { get; set; }
         public int ExaminationTypeId { get; set; }
         public string DoctorComment { get; set; }
-
     }
 }

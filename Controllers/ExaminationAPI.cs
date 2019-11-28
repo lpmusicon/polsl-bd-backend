@@ -214,6 +214,7 @@ namespace BackendProject.Controllers
         [HttpPost("laboratory/order")]
         public IActionResult Order(OrderExaminationModel input)
         {
+            
             using var db = new DatabaseContext();
             var pecheck = db.ExaminationsDictionary.SingleOrDefault(x => x.ExaminationDictionaryId == input.ExaminationTypeId);
             if (db.PatientVisits.SingleOrDefault(x => x.PatientVisitId == input.VisitId) != null && pecheck.Type == 'L')
@@ -224,9 +225,8 @@ namespace BackendProject.Controllers
                     OrderDate = DateTime.Now,
                     Status = "Ordered",
                     ExaminationDictionaryId = input.ExaminationTypeId
-
                 };
-                db.Add(input);
+                db.Add(Examination);
                 db.SaveChanges();
                 return Ok();
             }
