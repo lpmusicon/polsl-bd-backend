@@ -100,11 +100,10 @@ namespace BackendProject.Controllers
             if (db.Patients.SingleOrDefault(x => x.PatientId == input.PatientId) == null)
                 return BadRequest();
 
-            var isValid = input.PatientVisitId == 0 && input.Description == null && input.Diagnosis == null && input.CloseDate == null;
+            var isValid = input.PatientVisitId == 0 && input.Description == null && input.Diagnosis == null && input.CloseDate == null && input.RegisterDate > DateTime.Now;
             if (isValid)
             {
                 input.Status = "Registered";
-                input.RegisterDate = DateTime.Now;
                 db.PatientVisits.Add(input);
                 db.SaveChanges();
                 return StatusCode(201);
@@ -125,7 +124,7 @@ namespace BackendProject.Controllers
             // anuluje tylko swoje wizyty? jesli tak, dopisz cos, teraz moze anulowac wszystko (Kononowicz mode)
             var pv = db.PatientVisits.SingleOrDefault(x => x.PatientVisitId == visitId);
 
-            if (pv != null && formData.Reason != null)
+            if (pv != null && formData.Reason != null && pv.Status == "Registered")
             {
                 pv.Status = "Canceled";
                 pv.CloseDate = DateTime.Now;
@@ -158,7 +157,6 @@ namespace BackendProject.Controllers
                 {
                     pv.Diagnosis = input.Diagnosis;
                     pv.Description = input.Description;
-                    pv.DoctorId = uid;
                     pv.CloseDate = DateTime.Now;
                     pv.Status = "Closed";
                     db.SaveChanges();
