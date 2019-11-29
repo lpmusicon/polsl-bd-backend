@@ -153,7 +153,7 @@ namespace BackendProject.Controllers
             {
                 using var db = new DatabaseContext();
                 var pv = db.PatientVisits.SingleOrDefault(x => x.PatientVisitId == visitId);
-                if (pv != null && pv.Status == "Registered" && db.Doctors.SingleOrDefault(x => x.DoctorId == uid) != null)
+                if (pv != null && pv.Status == "Registered" && pv.DoctorId == uid)
                 {
                     pv.Diagnosis = input.Diagnosis;
                     pv.Description = input.Description;
