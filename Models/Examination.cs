@@ -43,6 +43,7 @@ namespace BackendProject.Models.Laboratory
         public DateTime? ExaminationDate { get; set; }
         public string Status { get; set; }
         public Person Worker { get; set; }
+        public string ExaminationName { get; set; }
     };
 
     public class Resolved : Executed

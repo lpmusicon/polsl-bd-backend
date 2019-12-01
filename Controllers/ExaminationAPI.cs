@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using BackendProject.Models.Laboratory;
 using BackendProject.Models.Physical;
 
-// Dorobić: wyswietlanie wizyt wraz z nazwami badan, labw powinien widziec swoje wykonane/anulowane badania, manager powinien widziec anulowane badania
+// labw powinien widziec swoje wykonane/anulowane badania, - mial miec tylko badania do zrobienia z tego co wiem
 
 namespace BackendProject.Controllers
 {
@@ -116,7 +116,7 @@ namespace BackendProject.Controllers
             var result = (from le in db.LaboratoryExaminations
                           join lw in db.LaboratoryWorkers on le.LaboratoryWorkerId equals lw.LaboratoryWorkerId
                           join lm in db.LaboratoryManagers on le.LaboratoryManagerId equals lm.LaboratoryManagerId
-                          //join ed in db.ExaminationsDictionary on le.ExaminationDictionaryId equals ed.ExaminationDictionaryId // do dokonczenia
+                          join ed in db.ExaminationsDictionary on le.ExaminationDictionaryId equals ed.ExaminationDictionaryId
                           select new Resolved
                           {
                               Result = le.Result,
@@ -124,6 +124,7 @@ namespace BackendProject.Controllers
                               OrderDate = le.OrderDate,
                               ExaminationDate = le.ExaminationDate,
                               Status = le.Status,
+                              ExaminationName = ed.Name,
                               Worker = new Person() {
                                   Id = lw.LaboratoryWorkerId,
                                   Name = lw.Name,
@@ -185,6 +186,7 @@ namespace BackendProject.Controllers
             using var db = new DatabaseContext();
             var result = (from le in db.LaboratoryExaminations
                           join lw in db.LaboratoryWorkers on le.LaboratoryWorkerId equals lw.LaboratoryWorkerId
+                          join ed in db.ExaminationsDictionary on le.ExaminationDictionaryId equals ed.ExaminationDictionaryId
                           where le.Status == "Executed"
                           select new Executed
                           {
@@ -193,6 +195,7 @@ namespace BackendProject.Controllers
                               OrderDate = le.OrderDate,
                               ExaminationDate = le.ExaminationDate,
                               Status = le.Status,
+                              ExaminationName = ed.Name,
                               Worker = new Person() {
                                   Id = lw.LaboratoryWorkerId,
                                   Name = lw.Name,
@@ -202,6 +205,33 @@ namespace BackendProject.Controllers
 
             return result;
         }
+
+        [HttpGet("laboratory/canceled")]
+        public List<Executed> CanceledExaminations()
+        {
+            using var db = new DatabaseContext();
+            var result = (from le in db.LaboratoryExaminations
+                          join lw in db.LaboratoryWorkers on le.LaboratoryWorkerId equals lw.LaboratoryWorkerId
+                          join ed in db.ExaminationsDictionary on le.ExaminationDictionaryId equals ed.ExaminationDictionaryId
+                          where le.Status == "Canceled"
+                          select new Executed
+                          {
+                              Result = le.Result,
+                              DoctorComment = le.DoctorComment,
+                              OrderDate = le.OrderDate,
+                              ExaminationDate = le.ExaminationDate,
+                              Status = le.Status,
+                              ExaminationName = ed.Name,
+                              Worker = new Person() {
+                                  Id = lw.LaboratoryWorkerId,
+                                  Name = lw.Name,
+                                  Lastname = lw.Lastname
+                              }
+                          }).ToList();
+
+            return result;
+        }
+        
 
         /* 
         {
