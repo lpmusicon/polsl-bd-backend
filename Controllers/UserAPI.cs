@@ -35,8 +35,7 @@ namespace BackendProject.Controllers
         }
         */
         [HttpPost("register")]
-        //[Authorize(Roles="ADMN")]
-        [AllowAnonymous]
+        [Authorize(Roles="ADMN")]
         public IActionResult Register(RegisterModel input)
         {
             using var db = new DatabaseContext();

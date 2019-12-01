@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System.Net;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using BackendProject.Models;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BackendProject.Controllers
 {
@@ -19,6 +21,7 @@ namespace BackendProject.Controllers
 
         [HttpGet]
         [HttpGet("all")]
+        [Authorize(Roles = "RECP")]
         public List<DoctorModel> All()
         {
             using var db = new DatabaseContext();
@@ -37,6 +40,7 @@ namespace BackendProject.Controllers
             Zbiera wizyty zarejestrowane dla doktora
         */
         [HttpGet("{doctorId}/visits/registered")]
+        [Authorize(Roles = "DOCT, RECP")]
         public List<VisitModel> RegisteredVisits(int doctorId)
         {
             using var db = new DatabaseContext();

@@ -24,8 +24,7 @@ namespace BackendProject.Controllers
 
         [HttpGet]
         [HttpGet("all")]
-        [AllowAnonymous]
-        //[Authorize(Roles="RECP, DOCT")]
+        [Authorize(Roles="RECP, DOCT")]
         public string All()
         {
             using var db = new DatabaseContext();
@@ -57,8 +56,7 @@ namespace BackendProject.Controllers
 
         [HttpGet("registered")]
         [HttpGet("registered/all")]
-        [AllowAnonymous]
-        //[Authorize(Roles="RECP, DOCT")]
+        [Authorize(Roles="RECP, DOCT")]
         public List<AllPatientsVisitsModel> AllRegistered() // do dogadania
         {
             using var db = new DatabaseContext();
@@ -85,7 +83,7 @@ namespace BackendProject.Controllers
         }
 
         [HttpGet("{visitId}")]
-        [AllowAnonymous]
+        [Authorize(Roles = "DOCT, RECP")]
         public VisitModel Visit(int visitId) // strzelam ze to pobierane zeby wykonac wizyte, sprawdzanie doktora? in progress?
         {
             using var db = new DatabaseContext();
@@ -112,7 +110,7 @@ namespace BackendProject.Controllers
         }
         */
         [HttpPost("register")]
-        //[Authorize(Roles="RECP")]
+        [Authorize(Roles="RECP")]
         public IActionResult Register(RegisterVisitModel input)
         {
             var UID = int.Parse(UserId);
@@ -142,7 +140,7 @@ namespace BackendProject.Controllers
         }
         */
         [HttpPost("{visitId}/cancel")]
-        //[Authorize(Roles="RECP, DOCT")]
+        [Authorize(Roles="RECP, DOCT")]
         public IActionResult Cancel(int visitId, ReasonModel formData)
         {
             var UID = int.Parse(UserId);
@@ -170,7 +168,7 @@ namespace BackendProject.Controllers
         }
         */
         [HttpPost("{visitId}/close")]
-        //[Authorize(Roles = "DOCT")]
+        [Authorize(Roles = "DOCT")]
         public IActionResult Close(int VisitId, PatientVisitCloseModel input)
         {
             var UID = int.Parse(UserId);

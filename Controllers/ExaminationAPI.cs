@@ -19,6 +19,7 @@ namespace BackendProject.Controllers
 
         [HttpGet("dictionary")]
         [HttpGet("dictionary/all")]
+        [Authorize(Roles = "DOCT, LABM, LABW")]
         public List<DictionaryModel> DictionaryAll()
         {
             using var db = new DatabaseContext();
@@ -33,6 +34,7 @@ namespace BackendProject.Controllers
         }
 
         [HttpGet("dictionary/laboratory")]
+        [Authorize(Roles = "DOCT, LABM, LABW")]
         public List<DictionaryModel> DictionaryLaboratory()
         {
             using var db = new DatabaseContext();
@@ -48,7 +50,7 @@ namespace BackendProject.Controllers
         }
 
         [HttpGet("dictionary/physical")]
-        [Authorize(Roles = "DOCT")]
+        [Authorize(Roles = "DOCT, LABM, LABW")]
         public List<DictionaryModel> DictionaryPhysical()
         {
             using var db = new DatabaseContext();
@@ -93,6 +95,7 @@ namespace BackendProject.Controllers
 
         /* Zbiera badania fizykalne z wizyty */
         [HttpGet("physical/performed/{visitId}")]
+        [Authorize(Roles = "DOCT")]
         public List<PhysicalExaminationModel> PhysicalExamination(int visitId)
         {
             using var db = new DatabaseContext();
@@ -110,6 +113,7 @@ namespace BackendProject.Controllers
 
 
         [HttpGet("laboratory/all")]
+        [Authorize(Roles = "LABM, LABW")]
         public List<Resolved> LaboratoryAll()
         {
             using var db = new DatabaseContext();
@@ -141,6 +145,7 @@ namespace BackendProject.Controllers
         }
 
         [HttpGet("laboratory/ordered")]
+        [Authorize(Roles = "LABM, LABW")]
         public List<Ordered> LaboratoryOrdered()
         {
             using var db = new DatabaseContext();
@@ -160,6 +165,7 @@ namespace BackendProject.Controllers
 
         /* Zbiera badania laboratoryjne z wizyty */
         [HttpGet("laboratory/ordered/{visitId}")]
+        [Authorize(Roles = "LABM, LABW, DOCT")]
         public List<OrderedExamination> Ordered(int visitId)
         {
             using var db = new DatabaseContext();
@@ -181,6 +187,7 @@ namespace BackendProject.Controllers
         }
 
         [HttpGet("laboratory/pending")]
+        [Authorize(Roles = "LABM, LABW")]
         public List<Executed> Pending()
         {
             using var db = new DatabaseContext();
@@ -207,6 +214,7 @@ namespace BackendProject.Controllers
         }
 
         [HttpGet("laboratory/canceled")]
+        [Authorize(Roles = "LABM, LABW, DOCT")]
         public List<Executed> CanceledExaminations()
         {
             using var db = new DatabaseContext();
@@ -241,6 +249,7 @@ namespace BackendProject.Controllers
         }
         */
         [HttpPost("laboratory/order")]
+        [Authorize(Roles = "DOCT")]
         public IActionResult Order(OrderExaminationModel input)
         {
             
