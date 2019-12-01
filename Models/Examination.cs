@@ -23,7 +23,7 @@ namespace BackendProject.Models.Physical
     {
         public string Result { get; set; }
         public int VisitId { get; set; }
-        public int ExaminationTypeId { get; set; }
+        public int ExaminationId { get; set; }
     }
 
     public class PhysicalExaminationModel
@@ -76,4 +76,9 @@ namespace BackendProject.Models.Laboratory
         public int ExaminationTypeId { get; set; }
         public string DoctorComment { get; set; }
     }
+
+    public class ResultModel
+    {
+        public string Result { get; set; }
+    };
 }

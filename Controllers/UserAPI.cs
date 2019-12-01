@@ -23,19 +23,20 @@ namespace BackendProject.Controllers
             _userService = userService;
         }
         
-        /* DisabledTo nie trzeba wypelniac bedzie dzialac, PWZNumber potrzebny tylko do lekarza
+        /* PWZNumber potrzebny tylko do lekarza
         {
             "Login": "",
             "Password": "",
             "Role": "",
-            "DisabledTo": "",
+            "ExpiryDate": "",
             "Name": "",
             "Lastname": "",
             "PWZNumber": ""
         }
         */
         [HttpPost("register")]
-        [Authorize(Roles="ADMN")]
+        //[Authorize(Roles="ADMN")]
+        [AllowAnonymous]
         public IActionResult Register(RegisterModel input)
         {
             using var db = new DatabaseContext();
@@ -47,20 +48,22 @@ namespace BackendProject.Controllers
                 input.Password != null &&
                 input.Name != null &&
                 input.Lastname != null &&
+                input.ExpiryDate > DateTime.Now &&
                 (input.Role == "RECP" || // sprawdzanie rol
                 input.Role == "LABW" ||
                 input.Role == "LABM" || 
                 input.Role == "DOCT" || 
                 input.Role == "ADMN") &&
                 (input.PWZNumber != null && input.PWZNumber.Length == 7 && input.PWZNumber.All(char.IsDigit) || // jesli rejstracja doktora konieczny sprecyzjowany PWZ
-                (input.PWZNumber == null && input.Role != "DOCT"))) // jesli rejstracja kogos innego niz doktor nie ma PZW
+                ((input.PWZNumber == null || input.PWZNumber == "") && input.Role != "DOCT"))) // jesli rejstracja kogos innego niz doktor nie ma PZW
             {
 
                 db.Users.Add(new User{
                     Login = input.Login,
                     Password = new PasswordHelper().CreateHashedPassword(input.Password), // tworzenie zahashowanego hasla
                     Role = input.Role,
-                    DisabledTo = input.DisabledTo
+                    ExpiryDate = input.ExpiryDate,
+                    NeverExpires = false
                 });
                 db.SaveChanges(); // zapis usera do bazy
                 var login_record = db.Users.Single(x => x.Login == input.Login); // tutaj jest record w ktorym jest id tego loginu
@@ -68,54 +71,44 @@ namespace BackendProject.Controllers
                 switch (input.Role)
                 {
                     case "ADMN":
-                        Admin ad = new Admin
-                        {
+                        db.Admins.Add(new Admin(){
                             AdminId = login_record.UserId,
                             Name = input.Name,
                             Lastname = input.Lastname
-                        };
-                        db.Admins.Add(ad);
+                        });
                         break;
 
                     case "RECP":
-                        Receptionist rec = new Receptionist
-                        {
+                        db.Receptionists.Add(new Receptionist(){
                             ReceptionistId = login_record.UserId,
                             Name = input.Name,
                             Lastname = input.Lastname
-                        };
-                        db.Receptionists.Add(rec);
+                        });
                         break;
 
                     case "LABW":
-                        LaboratoryWorker lw = new LaboratoryWorker
-                        {
+                        db.LaboratoryWorkers.Add(new LaboratoryWorker(){
                             LaboratoryWorkerId = login_record.UserId,
                             Name = input.Name,
                             Lastname = input.Lastname
-                        };
-                        db.LaboratoryWorkers.Add(lw);
+                        });
                         break;
 
                     case "LABM":
-                        LaboratoryManager lm = new LaboratoryManager
-                        {
+                        db.LaboratoryManagers.Add(new LaboratoryManager(){
                             LaboratoryManagerId = login_record.UserId,
                             Name = input.Name,
                             Lastname = input.Lastname
-                        };
-                        db.LaboratoryManagers.Add(lm);
+                        });
                         break;
 
                     case "DOCT":
-                        Doctor doc = new Doctor
-                        {
+                        db.Doctors.Add(new Doctor(){
                             DoctorId = login_record.UserId,
                             Name = input.Name,
                             Lastname = input.Lastname,
                             PWZNumber = input.PWZNumber
-                        };
-                        db.Doctors.Add(doc);
+                        });
                         break;
                 }
                 db.SaveChanges();
@@ -134,13 +127,12 @@ namespace BackendProject.Controllers
         [Authorize(Roles="ADMN")]
         public IActionResult Disable(int userId, DisableDateModel input)
         {
-                // Biere login
             using var db = new DatabaseContext();
             var user = db.Users.SingleOrDefault(x => x.UserId == userId);
-            if (user != null && (input.Status == "Active" || input.Status == "Unactive"))
+            if (user != null)
             {
-                user.DisabledTo = input.DisableTime;
-                user.Status = input.Status;
+                user.ExpiryDate = input.ExpiryDate;
+                user.NeverExpires = input.NeverExpires;
                 db.SaveChanges();
                 return NoContent();
             }
@@ -188,8 +180,8 @@ namespace BackendProject.Controllers
                               Name = r.Name,
                               Lastname = r.Lastname,
                               Role = u.Role,
-                              DisabledTo = u.DisabledTo,
-                              Status = u.Status
+                              ExpiryDate = u.ExpiryDate,
+                              NeverExpires = u.NeverExpires
                           }).ToList(); // lista wszystkich recepcjonistow
             foreach(UserModel item in recp) UsersList.Add(item); // wpisywanie wszystkich recepcjonistow do listy userow
 
@@ -202,8 +194,8 @@ namespace BackendProject.Controllers
                               Name = d.Name,
                               Lastname = d.Lastname,
                               Role = u.Role,
-                              DisabledTo = u.DisabledTo,
-                              Status = u.Status
+                              ExpiryDate = u.ExpiryDate,
+                              NeverExpires = u.NeverExpires
                           }).ToList(); // lista wszystkich lekarzy
             foreach(UserModel item in doct) UsersList.Add(item); // wpisywanie wszystkich lekarzy do listy userow
 
@@ -216,8 +208,8 @@ namespace BackendProject.Controllers
                               Name = lw.Name,
                               Lastname = lw.Lastname,
                               Role = u.Role,
-                              DisabledTo = u.DisabledTo,
-                              Status = u.Status
+                              ExpiryDate = u.ExpiryDate,
+                              NeverExpires = u.NeverExpires
                           }).ToList(); // lista wszystkich laborantow
             foreach(UserModel item in labw) UsersList.Add(item); // wpisywanie wszystkich laborantow do listy userow
 
@@ -230,8 +222,8 @@ namespace BackendProject.Controllers
                               Name = lm.Name,
                               Lastname = lm.Lastname,
                               Role = u.Role,
-                              DisabledTo = u.DisabledTo,
-                              Status = u.Status
+                              ExpiryDate = u.ExpiryDate,
+                              NeverExpires = u.NeverExpires
                           }).ToList(); // lista wszystkich managerow
             foreach(UserModel item in labm) UsersList.Add(item); // wpisywanie wszystkich managerow do listy userow
 
@@ -244,8 +236,8 @@ namespace BackendProject.Controllers
                               Name = a.Name,
                               Lastname = a.Lastname,
                               Role = u.Role,
-                              DisabledTo = u.DisabledTo,
-                              Status = u.Status
+                              ExpiryDate = u.ExpiryDate,
+                              NeverExpires = u.NeverExpires
                           }).ToList(); // lista wszystkich adminow
             foreach(UserModel item in admn) UsersList.Add(item); // wpisywanie wszystkich adminow do listy userow
             
@@ -276,7 +268,7 @@ namespace BackendProject.Controllers
             if (user == null)
                 return BadRequest(new { message = "Username or password is incorrect" });
 	
-            if(user.DisabledTo > DateTime.Now || user.Status == "Unactive")
+            if(user.ExpiryDate < DateTime.Now && !user.NeverExpires)
                 return BadRequest(new { message = "User is disabled" });
                
             return Ok(user);

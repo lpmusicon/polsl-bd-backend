@@ -1,13 +1,13 @@
-using System.Net;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 using BackendProject.Models;
 using System;
 using Microsoft.AspNetCore.Authorization;
 using BackendProject.Models.Laboratory;
 using BackendProject.Models.Physical;
+
+// Dorobić: wyswietlanie wizyt wraz z nazwami badan, labw powinien widziec swoje wykonane/anulowane badania, manager powinien widziec anulowane badania
 
 namespace BackendProject.Controllers
 {
@@ -76,17 +76,15 @@ namespace BackendProject.Controllers
         {
             using var db = new DatabaseContext();
             var pvcheck = db.PatientVisits.SingleOrDefault(x => x.PatientVisitId == input.VisitId);
-            var pecheck = db.ExaminationsDictionary.SingleOrDefault(x => x.ExaminationDictionaryId == input.ExaminationTypeId);
-            bool isExaminationValid = pvcheck != null && pvcheck.Status == "Registered" && pecheck.Type == 'F';
-            if (isExaminationValid)
+            var pecheck = db.ExaminationsDictionary.SingleOrDefault(x => x.ExaminationDictionaryId == input.ExaminationId);
+            
+            if (pvcheck != null && pecheck != null && pvcheck.Status == "Registered" && pecheck.Type == 'F')
             {
-                var PE = new PhysicalExamination()
-                {
+                db.Add(new PhysicalExamination(){
                     Result = input.Result,
                     PatientVisitId = input.VisitId,
-                    ExaminationDictionaryId = input.ExaminationTypeId
-                };
-                db.Add(input);
+                    ExaminationDictionaryId = input.ExaminationId
+                });
                 db.SaveChanges();
                 return Ok();
             }
@@ -118,6 +116,7 @@ namespace BackendProject.Controllers
             var result = (from le in db.LaboratoryExaminations
                           join lw in db.LaboratoryWorkers on le.LaboratoryWorkerId equals lw.LaboratoryWorkerId
                           join lm in db.LaboratoryManagers on le.LaboratoryManagerId equals lm.LaboratoryManagerId
+                          //join ed in db.ExaminationsDictionary on le.ExaminationDictionaryId equals ed.ExaminationDictionaryId // do dokonczenia
                           select new Resolved
                           {
                               Result = le.Result,
@@ -218,15 +217,14 @@ namespace BackendProject.Controllers
             using var db = new DatabaseContext();
             var pecheck = db.ExaminationsDictionary.SingleOrDefault(x => x.ExaminationDictionaryId == input.ExaminationTypeId);
             if (db.PatientVisits.SingleOrDefault(x => x.PatientVisitId == input.VisitId) != null && pecheck.Type == 'L')
-            {
-                var Examination = new LaboratoryExamination() {
+            { 
+                db.Add(new LaboratoryExamination() {
                     PatientVisitId = input.VisitId,
                     DoctorComment = input.DoctorComment,
                     OrderDate = DateTime.Now,
                     Status = "Ordered",
                     ExaminationDictionaryId = input.ExaminationTypeId
-                };
-                db.Add(Examination);
+                });
                 db.SaveChanges();
                 return Ok();
             }
@@ -242,14 +240,14 @@ namespace BackendProject.Controllers
         [Authorize(Roles = "LABW")]
         public IActionResult LaboratoryDo(int examinationId, ResultModel input)
         {
-            var uid = int.Parse(UserId);
+            var UID = int.Parse(UserId);
             using var db = new DatabaseContext();
             var ex = db.LaboratoryExaminations.SingleOrDefault(x => x.LaboratoryExaminationId == examinationId);
             if (ex != null && input.Result != null)
             {
                 ex.Status = "Executed";
                 ex.Result = input.Result;
-                ex.LaboratoryWorkerId = uid;
+                ex.LaboratoryWorkerId = UID;
                 ex.ExaminationDate = DateTime.Now;
                 db.SaveChanges();
                 return Ok();
@@ -266,15 +264,15 @@ namespace BackendProject.Controllers
         [Authorize(Roles = "LABW")]
         public IActionResult LaboratoryAbort(int examinationId, ReasonModel input)
         {
-            var uid = int.Parse(UserId);
+            var UID = int.Parse(UserId);
             using var db = new DatabaseContext();
             var ex = db.LaboratoryExaminations.SingleOrDefault(x => x.LaboratoryExaminationId == examinationId);
             if (ex != null)
             {
-                ex.ManagerComment = input.Reason;
+                ex.Result = input.Reason;
                 ex.Status = "Canceled";
                 ex.ExaminationDate = DateTime.Now;
-                ex.LaboratoryWorkerId = uid;
+                ex.LaboratoryWorkerId = UID;
                 db.SaveChanges();
                 return Ok();
             }
@@ -285,7 +283,7 @@ namespace BackendProject.Controllers
         [Authorize(Roles = "LABM")]
         public IActionResult Approve(int examinationId, ReasonModel input)
         {
-            var uid = int.Parse(UserId);
+            var UID = int.Parse(UserId);
             using var db = new DatabaseContext();
             var ex = db.LaboratoryExaminations.SingleOrDefault(x => x.LaboratoryExaminationId == examinationId);
             if (ex != null && ex.Status == "Executed")
@@ -293,7 +291,7 @@ namespace BackendProject.Controllers
                 ex.ManagerComment = input.Reason;
                 ex.Status = "Approval";
                 ex.ApprovalRejectionDate = DateTime.Now;
-                ex.LaboratoryManagerId = uid;
+                ex.LaboratoryManagerId = UID;
                 db.SaveChanges();
                 return Ok();
             }
@@ -304,7 +302,7 @@ namespace BackendProject.Controllers
         [Authorize(Roles = "LABM")]
         public IActionResult Reject(int examinationId, ReasonModel input)
         {
-            var uid = int.Parse(UserId);
+            var UID = int.Parse(UserId);
             using var db = new DatabaseContext();
             var ex = db.LaboratoryExaminations.SingleOrDefault(x => x.LaboratoryExaminationId == examinationId);
             if (ex != null && ex.Status == "Executed" && input.Reason != null)
@@ -312,7 +310,7 @@ namespace BackendProject.Controllers
                 ex.Status = "Rejected";
                 ex.ApprovalRejectionDate = DateTime.Now;
                 ex.ManagerComment = input.Reason;
-                ex.LaboratoryManagerId = uid;
+                ex.LaboratoryManagerId = UID;
                 db.SaveChanges();
                 return Ok();
             }

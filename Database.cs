@@ -166,8 +166,8 @@ namespace BackendProject
         public string Token { get; set; }
         [Required]
         public string Role { get; set; }
-        public DateTime DisabledTo { get; set; }
+        public DateTime ExpiryDate { get; set; }
         [Required]
-        public string Status { get; set; }
+        public bool NeverExpires { get; set; }
     }
 }

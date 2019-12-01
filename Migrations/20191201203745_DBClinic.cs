@@ -111,8 +111,10 @@ namespace BackendProject.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Login = table.Column<string>(nullable: false),
                     Password = table.Column<string>(nullable: false),
+                    Token = table.Column<string>(nullable: true),
                     Role = table.Column<string>(nullable: false),
-                    DisabledTo = table.Column<DateTime>(nullable: false)
+                    ExpiryDate = table.Column<DateTime>(nullable: false),
+                    NeverExpires = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -167,7 +169,7 @@ namespace BackendProject.Migrations
                     DoctorComment = table.Column<string>(nullable: true),
                     OrderDate = table.Column<DateTime>(nullable: false),
                     ExaminationDate = table.Column<DateTime>(nullable: true),
-                    MenagerComment = table.Column<string>(nullable: true),
+                    ManagerComment = table.Column<string>(nullable: true),
                     ApprovalRejectionDate = table.Column<DateTime>(nullable: true),
                     Status = table.Column<string>(nullable: true),
                     PatientVisitId = table.Column<int>(nullable: false),

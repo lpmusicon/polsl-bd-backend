@@ -14,9 +14,26 @@ namespace BackendProject.Models
     }
 
     public class PatientModel {
-        public int Id { get; set; }
+        public int PatientId { get; set; }
         public string Name { get; set; }
         public string Lastname { get; set; }
         public string PESEL { get; set; }
+    }
+
+    public class PatientPhysicalExaminationsModel{
+        public string ExaminationName { get; set; }
+        public string Result { get; set; }
+        public string DoctorName { get; set; }
+        public string DoctorLastName { get; set; }
+        public DateTime? ExaminationDate { get; set; }
+    }
+
+    public class PatientLaboratoryExaminationsModel{
+        public string ExaminationName { get; set; }
+        public string Result { get; set; }
+        public string DoctorName { get; set; }
+        public string DoctorLastName { get; set; }
+        public DateTime OrderExaminationDate { get; set; }
+        public DateTime? ExecuteExaminationDate { get; set; }
     }
 }

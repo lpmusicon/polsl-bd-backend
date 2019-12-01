@@ -1,10 +1,8 @@
-﻿using System.Runtime.Serialization.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using BackendProject.Models;
 using Microsoft.Extensions.Logging;
-using System.Text.Json;
 
 namespace BackendProject.Controllers
 {
@@ -27,7 +25,7 @@ namespace BackendProject.Controllers
             var result = (from x in db.Doctors
                           select new DoctorModel
                           {
-                              Id = x.DoctorId,
+                              DoctorId = x.DoctorId,
                               Name = x.Name,
                               Lastname = x.Lastname
                           }).ToList();
@@ -35,7 +33,7 @@ namespace BackendProject.Controllers
             return result;
         }
 
-        /**
+        /*
             Zbiera wizyty zarejestrowane dla doktora
         */
         [HttpGet("{doctorId}/visits/registered")]
@@ -47,9 +45,9 @@ namespace BackendProject.Controllers
                           where pv.DoctorId == doctorId && pv.Status == "Registered"
                           select new VisitModel
                           {
-                              Id = pv.PatientVisitId,
+                              PatientVisitId = pv.PatientVisitId,
                               Patient = new PatientModel() {
-                                  Id = p.PatientId,
+                                  PatientId = p.PatientId,
                                   Name = p.Name,
                                   Lastname = p.Lastname
                               },

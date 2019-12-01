@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 using BackendProject.Models;
 using Microsoft.AspNetCore.Authorization;
 
@@ -11,6 +10,7 @@ namespace BackendProject.Controllers
     [Route("patient")]
     public class PatientController : ControllerBase
     {
+
         [HttpGet]
         [HttpGet("all")]
         [Authorize(Roles = "RECP, DOCT")]
@@ -37,13 +37,11 @@ namespace BackendProject.Controllers
 
             if (input.PESEL.All(char.IsDigit))
             {
-                Patient p = new Patient()
-                {
+                db.Patients.Add(new Patient(){
                     PESEL = input.PESEL,
                     Name = input.Name,
                     Lastname = input.Lastname
-                };
-                db.Patients.Add(p);
+                });
                 db.SaveChanges();
                 return NoContent();
             }
@@ -64,7 +62,7 @@ namespace BackendProject.Controllers
                 select new PatientVisitsModel
                 {
                     Patient = new PatientModel() {
-                        Id = p.PatientId,
+                        PatientId = p.PatientId,
                         Name = p.Name,
                         Lastname = p.Lastname
                     },
@@ -74,7 +72,7 @@ namespace BackendProject.Controllers
                     Description = pv.Description,
                     Diagnosis = pv.Diagnosis,
                     Doctor = new DoctorModel() {
-                        Id = d.DoctorId,
+                        DoctorId = d.DoctorId,
                         Name = d.Name,
                         Lastname = d.Lastname
                     },

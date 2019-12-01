@@ -26,7 +26,7 @@ namespace BackendProject.Controllers
         [HttpGet("all")]
         [AllowAnonymous]
         //[Authorize(Roles="RECP, DOCT")]
-        public string All() // do dogadania
+        public string All()
         {
             using var db = new DatabaseContext();
             var result = (from p in db.Patients
@@ -35,12 +35,12 @@ namespace BackendProject.Controllers
                           select new PatientVisitsModel
                           {
                               Patient = new PatientModel() {
-                                  Id = p.PatientId,
+                                  PatientId = p.PatientId,
                                   Name = p.Name,
                                   Lastname = p.Lastname
                               },
                               Doctor = new DoctorModel() {
-                                  Id = d.DoctorId,
+                                  DoctorId = d.DoctorId,
                                   Name = d.Name,
                                   Lastname = d.Lastname
                               },
@@ -68,14 +68,14 @@ namespace BackendProject.Controllers
                           where pv.Status == "Registered"
                           select new AllPatientsVisitsModel
                           {
-                              Id = pv.PatientVisitId,
+                              PatientVisitId = pv.PatientVisitId,
                               Doctor = new DoctorModel() {
-                                  Id = d.DoctorId,
+                                  DoctorId = d.DoctorId,
                                   Name = d.Name,
                                   Lastname = d.Lastname
                               },
                               Patient = new PatientModel() {
-                                  Id = p.PatientId,
+                                  PatientId = p.PatientId,
                                   Name = p.Name,
                                   Lastname = p.Lastname
                               },
@@ -86,7 +86,6 @@ namespace BackendProject.Controllers
 
         [HttpGet("{visitId}")]
         [AllowAnonymous]
-        //[Authorize(Roles="DOCT")]
         public VisitModel Visit(int visitId) // strzelam ze to pobierane zeby wykonac wizyte, sprawdzanie doktora? in progress?
         {
             using var db = new DatabaseContext();
@@ -94,10 +93,10 @@ namespace BackendProject.Controllers
             if(visit == null) return new VisitModel();
             var patient = db.Patients.SingleOrDefault(x => x.PatientId == visit.PatientId); // do poprawy
             return new VisitModel() {
-                Id = visit.PatientVisitId,
+                PatientVisitId = visit.PatientVisitId,
                 RegisterDate = visit.RegisterDate,
                 Patient = new PatientModel() {
-                    Id = patient.PatientId,
+                    PatientId = patient.PatientId,
                     Name = patient.Name,
                     Lastname = patient.Lastname,
                     PESEL = patient.PESEL

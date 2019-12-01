@@ -276,22 +276,21 @@ namespace BackendProject.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("DisabledTo")
+                    b.Property<DateTime>("ExpiryDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Login")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("NeverExpires")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

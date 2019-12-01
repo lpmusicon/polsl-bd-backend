@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackendProject.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20191201124924_DBClinicv3")]
-    partial class DBClinicv3
+    [Migration("20191201203745_DBClinic")]
+    partial class DBClinic
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -278,22 +278,21 @@ namespace BackendProject.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("DisabledTo")
+                    b.Property<DateTime>("ExpiryDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Login")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("NeverExpires")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
