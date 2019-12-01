@@ -162,6 +162,28 @@ namespace BackendProject.Controllers
                           }).ToList();
             return result;
         }
+        
+        /* Wszystkie badania danego labworkera */
+        [HttpGet("laboratory/done")]
+        [Authorize(Roles = "LABW")]
+        public List<Ordered> LaboratoryDone()
+        {
+            var UID = int.Parse(UserId);
+
+            using var db = new DatabaseContext();
+            var result = (from le in db.LaboratoryExaminations
+                          join ed in db.ExaminationsDictionary
+                          on le.ExaminationDictionaryId equals ed.ExaminationDictionaryId
+                          where le.LaboratoryWorkerId==UID
+                          select new Ordered
+                          {
+                              Id = le.LaboratoryExaminationId,
+                              LaboratoryExaminationName = ed.Name,
+                              DoctorComment = le.DoctorComment,
+                              OrderDate = le.OrderDate,
+                          }).ToList();
+            return result;
+        }
 
         /* Zbiera badania laboratoryjne z wizyty */
         [HttpGet("laboratory/ordered/{visitId}")]
