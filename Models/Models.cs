@@ -28,6 +28,7 @@ namespace BackendProject.Models
     public class DisableDateModel
     {
         public DateTime DisableTime { get; set; }
+        public string Status { get; set; }
     };
 
     public class PasswordModel
@@ -43,6 +44,7 @@ namespace BackendProject.Models
         public string Lastname { get; set; }
         public string Role { get; set; }
         public DateTime DisabledTo { get; set; }
+        public string Status { get; set; }
     };
 
     public class RoleModel
@@ -76,11 +78,6 @@ namespace BackendProject.Models
     }
 
     // Doctor Interfaces
-    public class PatientVisitModel
-    {
-        public string Description { get; set; }
-        public string Diagnosis { get; set; }
-    };
 
     public class PatientsVisitsModel
     {

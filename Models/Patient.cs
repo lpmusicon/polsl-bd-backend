@@ -17,9 +17,6 @@ namespace BackendProject.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Lastname { get; set; }
-
-        public override string ToString() {
-            return string.Format("PID: {0}, Name: {1}, LN: {2}", Id, Name, Lastname);
-        }
+        public string PESEL { get; set; }
     }
 }

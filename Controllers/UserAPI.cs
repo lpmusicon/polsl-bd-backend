@@ -45,26 +45,23 @@ namespace BackendProject.Controllers
 
             if (input.Login != null &&
                 input.Password != null &&
-                input.Role != null &&
                 input.Name != null &&
                 input.Lastname != null &&
-                (input.PWZNumber != null && input.PWZNumber.Length == 7 && input.PWZNumber.All(char.IsDigit) ||
-                (input.PWZNumber == null && input.Role != "DOCT")))
+                (input.Role == "RECP" || // sprawdzanie rol
+                input.Role == "LABW" ||
+                input.Role == "LABM" || 
+                input.Role == "DOCT" || 
+                input.Role == "ADMN") &&
+                (input.PWZNumber != null && input.PWZNumber.Length == 7 && input.PWZNumber.All(char.IsDigit) || // jesli rejstracja doktora konieczny sprecyzjowany PWZ
+                (input.PWZNumber == null && input.Role != "DOCT"))) // jesli rejstracja kogos innego niz doktor nie ma PZW
             {
 
-                var pw = new PasswordHelper();
-                var user = new User
-                {
+                db.Users.Add(new User{
                     Login = input.Login,
-                    Password = pw.CreateHashedPassword(input.Password),
+                    Password = new PasswordHelper().CreateHashedPassword(input.Password), // tworzenie zahashowanego hasla
                     Role = input.Role,
                     DisabledTo = input.DisabledTo
-                };
-
-                if (input.Role != "RECP" && input.Role != "LABW" && input.Role != "LABM" && input.Role != "DOCT" && input.Role != "ADMN")
-                    return BadRequest(); // jesli zla rola
-
-                db.Users.Add(user);
+                });
                 db.SaveChanges(); // zapis usera do bazy
                 var login_record = db.Users.Single(x => x.Login == input.Login); // tutaj jest record w ktorym jest id tego loginu
 
@@ -135,20 +132,17 @@ namespace BackendProject.Controllers
         */
         [HttpPatch("{userId}/disable")]
         [Authorize(Roles="ADMN")]
-        public IActionResult Disable(int userId, DisableDateModel ndt)
+        public IActionResult Disable(int userId, DisableDateModel input)
         {
-            if (userId != 0 && ndt.DisableTime != null)
-            {
                 // Biere login
-                using var db = new DatabaseContext();
-                var user = db.Users.SingleOrDefault(x => x.UserId == userId);
-                if (user != null)
-                {
-                    user.DisabledTo = ndt.DisableTime;
-                    db.SaveChanges();
-                    return NoContent();
-                }
-                return NotFound();
+            using var db = new DatabaseContext();
+            var user = db.Users.SingleOrDefault(x => x.UserId == userId);
+            if (user != null && (input.Status == "Active" || input.Status == "Unactive"))
+            {
+                user.DisabledTo = input.DisableTime;
+                user.Status = input.Status;
+                db.SaveChanges();
+                return NoContent();
             }
             return BadRequest();
         }
@@ -163,21 +157,16 @@ namespace BackendProject.Controllers
         [Authorize(Roles="ADMN")]
         public IActionResult Password(int userId, PasswordModel input)
         {
-            if (userId != 0 && input.NewPassword != null)
+            using var db = new DatabaseContext();
+            var user = db.Users.SingleOrDefault(x => x.UserId == userId);
+            
+            if (user != null && input.NewPassword != null)
             {
-                // Biere login
-                using var db = new DatabaseContext();
-                var user = db.Users.SingleOrDefault(x => x.UserId == userId);
-                if (user != null)
-                {
-                    var pw = new PasswordHelper();
-                    string newPassword = pw.CreateHashedPassword(input.NewPassword);
-
-                    user.Password = newPassword;
-                    db.SaveChanges();
-                    return NoContent();
-                }
-                return NotFound();
+                var pw = new PasswordHelper();
+                string newPassword = pw.CreateHashedPassword(input.NewPassword);
+                user.Password = newPassword;
+                db.SaveChanges();
+                return NoContent();
             }
             return BadRequest();
         }
@@ -199,9 +188,10 @@ namespace BackendProject.Controllers
                               Name = r.Name,
                               Lastname = r.Lastname,
                               Role = u.Role,
-                              DisabledTo = u.DisabledTo
-                          }).ToList();
-            foreach(UserModel item in recp) UsersList.Add(item);
+                              DisabledTo = u.DisabledTo,
+                              Status = u.Status
+                          }).ToList(); // lista wszystkich recepcjonistow
+            foreach(UserModel item in recp) UsersList.Add(item); // wpisywanie wszystkich recepcjonistow do listy userow
 
             var doct = (from u in db.Users
                           join d in db.Doctors on u.UserId equals d.DoctorId
@@ -212,9 +202,10 @@ namespace BackendProject.Controllers
                               Name = d.Name,
                               Lastname = d.Lastname,
                               Role = u.Role,
-                              DisabledTo = u.DisabledTo
-                          }).ToList();
-            foreach(UserModel item in doct) UsersList.Add(item);
+                              DisabledTo = u.DisabledTo,
+                              Status = u.Status
+                          }).ToList(); // lista wszystkich lekarzy
+            foreach(UserModel item in doct) UsersList.Add(item); // wpisywanie wszystkich lekarzy do listy userow
 
             var labw = (from u in db.Users
                           join lw in db.LaboratoryWorkers on u.UserId equals lw.LaboratoryWorkerId
@@ -225,9 +216,10 @@ namespace BackendProject.Controllers
                               Name = lw.Name,
                               Lastname = lw.Lastname,
                               Role = u.Role,
-                              DisabledTo = u.DisabledTo
-                          }).ToList();
-            foreach(UserModel item in labw) UsersList.Add(item);
+                              DisabledTo = u.DisabledTo,
+                              Status = u.Status
+                          }).ToList(); // lista wszystkich laborantow
+            foreach(UserModel item in labw) UsersList.Add(item); // wpisywanie wszystkich laborantow do listy userow
 
             var labm = (from u in db.Users
                           join lm in db.LaboratoryManagers on u.UserId equals lm.LaboratoryManagerId
@@ -238,9 +230,10 @@ namespace BackendProject.Controllers
                               Name = lm.Name,
                               Lastname = lm.Lastname,
                               Role = u.Role,
-                              DisabledTo = u.DisabledTo
-                          }).ToList();
-            foreach(UserModel item in labm) UsersList.Add(item);
+                              DisabledTo = u.DisabledTo,
+                              Status = u.Status
+                          }).ToList(); // lista wszystkich managerow
+            foreach(UserModel item in labm) UsersList.Add(item); // wpisywanie wszystkich managerow do listy userow
 
             var admn = (from u in db.Users
                           join a in db.Admins on u.UserId equals a.AdminId
@@ -251,9 +244,10 @@ namespace BackendProject.Controllers
                               Name = a.Name,
                               Lastname = a.Lastname,
                               Role = u.Role,
-                              DisabledTo = u.DisabledTo
-                          }).ToList();
-            foreach(UserModel item in admn) UsersList.Add(item);
+                              DisabledTo = u.DisabledTo,
+                              Status = u.Status
+                          }).ToList(); // lista wszystkich adminow
+            foreach(UserModel item in admn) UsersList.Add(item); // wpisywanie wszystkich adminow do listy userow
             
             return UsersList;
         }
@@ -282,7 +276,7 @@ namespace BackendProject.Controllers
             if (user == null)
                 return BadRequest(new { message = "Username or password is incorrect" });
 	
-            if(user.DisabledTo > DateTime.Now)
+            if(user.DisabledTo > DateTime.Now || user.Status == "Unactive")
                 return BadRequest(new { message = "User is disabled" });
                
             return Ok(user);

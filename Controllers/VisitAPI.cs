@@ -24,7 +24,9 @@ namespace BackendProject.Controllers
 
         [HttpGet]
         [HttpGet("all")]
-        public string All()
+        [AllowAnonymous]
+        //[Authorize(Roles="RECP, DOCT")]
+        public string All() // do dogadania
         {
             using var db = new DatabaseContext();
             var result = (from p in db.Patients
@@ -55,7 +57,9 @@ namespace BackendProject.Controllers
 
         [HttpGet("registered")]
         [HttpGet("registered/all")]
-        public List<AllPatientsVisitsModel> AllRegistered()
+        [AllowAnonymous]
+        //[Authorize(Roles="RECP, DOCT")]
+        public List<AllPatientsVisitsModel> AllRegistered() // do dogadania
         {
             using var db = new DatabaseContext();
             var result = (from p in db.Patients
@@ -81,15 +85,23 @@ namespace BackendProject.Controllers
         }
 
         [HttpGet("{visitId}")]
-        public VisitModel Visit(int visitId)
+        [AllowAnonymous]
+        //[Authorize(Roles="DOCT")]
+        public VisitModel Visit(int visitId) // strzelam ze to pobierane zeby wykonac wizyte, sprawdzanie doktora? in progress?
         {
             using var db = new DatabaseContext();
             var visit = db.PatientVisits.SingleOrDefault(x => x.PatientVisitId == visitId);
             if(visit == null) return new VisitModel();
+            var patient = db.Patients.SingleOrDefault(x => x.PatientId == visit.PatientId); // do poprawy
             return new VisitModel() {
                 Id = visit.PatientVisitId,
                 RegisterDate = visit.RegisterDate,
-                Patient = new PatientModel() {}
+                Patient = new PatientModel() {
+                    Id = patient.PatientId,
+                    Name = patient.Name,
+                    Lastname = patient.Lastname,
+                    PESEL = patient.PESEL
+                }
             };
         }
 
@@ -97,30 +109,31 @@ namespace BackendProject.Controllers
         {
             "PatientId": ,
             "DoctorId": ,
-            "ReceptionistId": 
+            "RegisterDate": 
         }
         */
         [HttpPost("register")]
-        public IActionResult Register([FromBody]PatientVisitRegisterModel input)
+        //[Authorize(Roles="RECP")]
+        public IActionResult Register(RegisterVisitModel input)
         {
-            _logger.LogWarning(string.Format("{0} {1}", input, UserId));
-            var uid = int.Parse(UserId);
-
+            var UID = int.Parse(UserId);
             using var db = new DatabaseContext();
-            if (db.Patients.SingleOrDefault(x => x.PatientId == input.patientId) == null)
-                return BadRequest();
-            
-            var Visit = new PatientVisit() {
-                Status = "Registered",
-                RegisterDate = DateTime.Now,
-                PatientId = input.patientId,
-                DoctorId = input.doctorId,
-                ReceptionistId = uid,
-            };
 
-            db.PatientVisits.Add(Visit);
-            db.SaveChanges();
-            return StatusCode(201);
+            if (input.RegisterDate > DateTime.Now && // sprawdzenie czy data wizyty wydarzy sie w przyszlosci
+            db.Patients.SingleOrDefault(x => x.PatientId == input.PatientId) != null && // sprawdzenie czy istnieje taki pacjent i
+            db.Doctors.SingleOrDefault(x => x.DoctorId == input.DoctorId) != null) // czy istnieje taki lekarz
+            {    
+                db.PatientVisits.Add(new PatientVisit{
+                    Status = "Registered",
+                    RegisterDate = input.RegisterDate,
+                    PatientId = input.PatientId,
+                    DoctorId = input.DoctorId,
+                    ReceptionistId = UID
+                });
+                db.SaveChanges();
+                return StatusCode(201);
+            }
+            return BadRequest();
         }
         
         /* 
@@ -130,13 +143,16 @@ namespace BackendProject.Controllers
         }
         */
         [HttpPost("{visitId}/cancel")]
+        //[Authorize(Roles="RECP, DOCT")]
         public IActionResult Cancel(int visitId, ReasonModel formData)
         {
+            var UID = int.Parse(UserId);
             using var db = new DatabaseContext();
-            // anuluje tylko swoje wizyty? jesli tak, dopisz cos, teraz moze anulowac wszystko (Kononowicz mode)
+
             var pv = db.PatientVisits.SingleOrDefault(x => x.PatientVisitId == visitId);
 
-            if (pv != null && formData.Reason != null)
+            if (pv != null && formData.Reason != null && pv.Status == "Registered" && 
+            (User.IsInRole("DOCT") && UID == pv.DoctorId || User.IsInRole("RECP"))) // doktor moze anulowac tylko swoje a recp wszystkie
             {
                 pv.Status = "Canceled";
                 pv.CloseDate = DateTime.Now;
@@ -150,35 +166,28 @@ namespace BackendProject.Controllers
         /* 
         {
             "PatientVisitId": , 
-            "DoctorID": , 
             "Description": "",
             "Diagnosis": ""  
         }
         */
         [HttpPost("{visitId}/close")]
-        [Authorize(Roles = "DOCT")]
-        public IActionResult Close(int visitId, PatientVisitModel input)
+        //[Authorize(Roles = "DOCT")]
+        public IActionResult Close(int VisitId, PatientVisitCloseModel input)
         {
-            var uid = int.Parse(UserId);
-            bool isInputValid = visitId != 0 && uid != 0 && input.Description != null && input.Diagnosis != null;
-            if (isInputValid)
+            var UID = int.Parse(UserId);
+            using var db = new DatabaseContext();
+            var pv = db.PatientVisits.SingleOrDefault(x => x.PatientVisitId == VisitId);
+                
+            if (pv != null && pv.Status == "Registered" && pv.DoctorId == UID && pv.Description != null) // pv.Status == "In Progress" jesli bedziemy to robic, diagnoza moze byc null?
             {
-                using var db = new DatabaseContext();
-                var pv = db.PatientVisits.SingleOrDefault(x => x.PatientVisitId == visitId);
-                if (pv != null && pv.Status == "Registered" && db.Doctors.SingleOrDefault(x => x.DoctorId == uid) != null)
-                {
                     pv.Diagnosis = input.Diagnosis;
                     pv.Description = input.Description;
-                    pv.DoctorId = uid;
                     pv.CloseDate = DateTime.Now;
                     pv.Status = "Closed";
                     db.SaveChanges();
                     return Ok();
-                }
-                return NotFound();
             }
             return BadRequest();
         }
-
     }
 }

@@ -167,5 +167,7 @@ namespace BackendProject
         [Required]
         public string Role { get; set; }
         public DateTime DisabledTo { get; set; }
+        [Required]
+        public string Status { get; set; }
     }
 }
