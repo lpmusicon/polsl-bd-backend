@@ -62,6 +62,19 @@ namespace BackendProject.Models
         public string Reason { get; set; }
     }
 
+    public class PatientVisitRegisterModel
+    {
+        [Required]
+        public int patientId { get; set; }
+
+        [Required]
+        public int doctorId  { get; set; }
+
+        public override string ToString() {
+            return string.Format("PID: {0} DID {1}", this.patientId.ToString(), this.doctorId.ToString());
+        }
+    }
+
     // Doctor Interfaces
     public class PatientVisitModel
     {

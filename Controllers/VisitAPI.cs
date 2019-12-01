@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using BackendProject.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace BackendProject.Controllers
 {
@@ -13,6 +14,13 @@ namespace BackendProject.Controllers
     public class VisitController : ControllerBase
     {
         public string UserId => User.Identity.Name;
+
+        private readonly ILogger<VisitController> _logger;
+
+        public VisitController(ILogger<VisitController> logger)
+        {
+            _logger = logger;
+        }
 
         [HttpGet]
         [HttpGet("all")]
@@ -93,23 +101,26 @@ namespace BackendProject.Controllers
         }
         */
         [HttpPost("register")]
-        public IActionResult Register(PatientVisit input)
+        public IActionResult Register([FromBody]PatientVisitRegisterModel input)
         {
+            _logger.LogWarning(string.Format("{0} {1}", input, UserId));
+            var uid = int.Parse(UserId);
 
             using var db = new DatabaseContext();
-            if (db.Patients.SingleOrDefault(x => x.PatientId == input.PatientId) == null)
+            if (db.Patients.SingleOrDefault(x => x.PatientId == input.patientId) == null)
                 return BadRequest();
+            
+            var Visit = new PatientVisit() {
+                Status = "Registered",
+                RegisterDate = DateTime.Now,
+                PatientId = input.patientId,
+                DoctorId = input.doctorId,
+                ReceptionistId = uid,
+            };
 
-            var isValid = input.PatientVisitId == 0 && input.Description == null && input.Diagnosis == null && input.CloseDate == null;
-            if (isValid)
-            {
-                input.Status = "Registered";
-                input.RegisterDate = DateTime.Now;
-                db.PatientVisits.Add(input);
-                db.SaveChanges();
-                return StatusCode(201);
-            }
-            return BadRequest();
+            db.PatientVisits.Add(Visit);
+            db.SaveChanges();
+            return StatusCode(201);
         }
         
         /* 
