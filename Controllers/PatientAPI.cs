@@ -35,7 +35,7 @@ namespace BackendProject.Controllers
             if (db.Patients.SingleOrDefault(x => x.PESEL == input.PESEL) != null)
                 return BadRequest("Duplicate PESEL");
 
-            if (input.PESEL.All(char.IsDigit))
+            if (input.PESEL.Length == 11 && input.PESEL.All(char.IsDigit))
             {
                 db.Patients.Add(new Patient(){
                     PESEL = input.PESEL,
