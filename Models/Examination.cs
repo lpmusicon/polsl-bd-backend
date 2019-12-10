@@ -37,6 +37,7 @@ namespace BackendProject.Models.Laboratory
 {
     public class Executed
     {
+        public int Id { get; set; }
         public string Result { get; set; }
         public string DoctorComment { get; set; }
         public DateTime OrderDate { get; set; }

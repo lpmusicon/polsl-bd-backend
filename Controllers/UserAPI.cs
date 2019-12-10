@@ -47,7 +47,6 @@ namespace BackendProject.Controllers
                 input.Password != null &&
                 input.Name != null &&
                 input.Lastname != null &&
-                input.ExpiryDate > DateTime.Now &&
                 (input.Role == "RECP" || // sprawdzanie rol
                 input.Role == "LABW" ||
                 input.Role == "LABM" || 

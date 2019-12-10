@@ -197,6 +197,7 @@ namespace BackendProject.Controllers
                           where le.Status == "Executed"
                           select new Executed
                           {
+                              Id = le.LaboratoryExaminationId,
                               Result = le.Result,
                               DoctorComment = le.DoctorComment,
                               OrderDate = le.OrderDate,
