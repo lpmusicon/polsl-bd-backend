@@ -39,7 +39,7 @@ namespace BackendProject.Controllers
                                   Lastname = p.Lastname
                               },
                               Doctor = new DoctorModel() {
-                                  DoctorId = d.DoctorId,
+                                  Id = d.DoctorId,
                                   Name = d.Name,
                                   Lastname = d.Lastname
                               },
@@ -68,7 +68,7 @@ namespace BackendProject.Controllers
                           {
                               PatientVisitId = pv.PatientVisitId,
                               Doctor = new DoctorModel() {
-                                  DoctorId = d.DoctorId,
+                                  Id = d.DoctorId,
                                   Name = d.Name,
                                   Lastname = d.Lastname
                               },

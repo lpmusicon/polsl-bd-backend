@@ -72,7 +72,7 @@ namespace BackendProject.Controllers
                     Description = pv.Description,
                     Diagnosis = pv.Diagnosis,
                     Doctor = new DoctorModel() {
-                        DoctorId = d.DoctorId,
+                        Id = d.DoctorId,
                         Name = d.Name,
                         Lastname = d.Lastname
                     },
