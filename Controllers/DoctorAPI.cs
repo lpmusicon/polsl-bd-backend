@@ -28,7 +28,7 @@ namespace BackendProject.Controllers
             var result = (from x in db.Doctors
                           select new DoctorModel
                           {
-                              Id = x.DoctorId,
+                              DoctorId = x.DoctorId,
                               Name = x.Name,
                               Lastname = x.Lastname
                           }).ToList();

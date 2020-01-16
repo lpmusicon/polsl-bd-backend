@@ -72,7 +72,7 @@ namespace BackendProject.Controllers
                     Description = pv.Description,
                     Diagnosis = pv.Diagnosis,
                     Doctor = new DoctorModel() {
-                        Id = d.DoctorId,
+                        DoctorId = d.DoctorId,
                         Name = d.Name,
                         Lastname = d.Lastname
                     },
@@ -82,7 +82,7 @@ namespace BackendProject.Controllers
             return result;
         }
 
-        [HttpGet("{patientId}/PhysicalExaminations/all")]
+        [HttpGet("{patientId}/physical_examinations/all")]
         [Authorize(Roles = "DOCT")]
         public List<PatientPhysicalExaminationsModel> PatientPhysicalExaminations(int patientId)
         {
@@ -106,7 +106,7 @@ namespace BackendProject.Controllers
             return result;
         }
 
-        [HttpGet("{patientId}/LaboratoryExaminations/all")]
+        [HttpGet("{patientId}/laboratory_examinations/all")]
         [Authorize(Roles = "DOCT")]
         public List<PatientLaboratoryExaminationsModel> PatientLaboratoryExaminations(int patientId)
         {

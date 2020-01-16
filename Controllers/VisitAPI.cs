@@ -39,7 +39,7 @@ namespace BackendProject.Controllers
                                   Lastname = p.Lastname
                               },
                               Doctor = new DoctorModel() {
-                                  Id = d.DoctorId,
+                                  DoctorId = d.DoctorId,
                                   Name = d.Name,
                                   Lastname = d.Lastname
                               },
@@ -68,7 +68,7 @@ namespace BackendProject.Controllers
                           {
                               PatientVisitId = pv.PatientVisitId,
                               Doctor = new DoctorModel() {
-                                  Id = d.DoctorId,
+                                  DoctorId = d.DoctorId,
                                   Name = d.Name,
                                   Lastname = d.Lastname
                               },
@@ -175,7 +175,7 @@ namespace BackendProject.Controllers
             using var db = new DatabaseContext();
             var pv = db.PatientVisits.SingleOrDefault(x => x.PatientVisitId == VisitId);
                 
-            if (pv != null && pv.Status == "Registered" && pv.DoctorId == UID && pv.Description != null) // pv.Status == "In Progress" jesli bedziemy to robic, diagnoza moze byc null?
+            if (pv != null && pv.Status == "Registered" && pv.DoctorId == UID) // pv.Status == "In Progress" jesli bedziemy to robic, diagnoza moze byc null?
             {
                     pv.Diagnosis = input.Diagnosis;
                     pv.Description = input.Description;
