@@ -61,6 +61,13 @@ namespace BackendProject.Models.Laboratory
         public DateTime OrderDate { get; set; }
     };
 
+    public class Generic : Ordered
+    {
+        public string Status { get; set; }
+        public DateTime? ExaminationDate { get; set; }
+        public string Result { get; set; }
+    }
+
     public class OrderedExamination
     {
         public int Id { get; set; }

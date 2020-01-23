@@ -166,7 +166,7 @@ namespace BackendProject.Controllers
         /* Wszystkie badania danego labworkera */
         [HttpGet("laboratory/done")]
         [Authorize(Roles = "LABW")]
-        public List<Ordered> LaboratoryDone()
+        public List<Generic> LaboratoryDone()
         {
             var UID = int.Parse(UserId);
 
@@ -174,13 +174,39 @@ namespace BackendProject.Controllers
             var result = (from le in db.LaboratoryExaminations
                           join ed in db.ExaminationsDictionary
                           on le.ExaminationDictionaryId equals ed.ExaminationDictionaryId
-                          where le.LaboratoryWorkerId==UID
-                          select new Ordered
+                          where le.LaboratoryWorkerId==UID && le.Status != "Ordered"
+                          select new Generic
                           {
                               Id = le.LaboratoryExaminationId,
                               LaboratoryExaminationName = ed.Name,
                               DoctorComment = le.DoctorComment,
                               OrderDate = le.OrderDate,
+                              Status = le.Status,
+                              ExaminationDate = le.ExaminationDate,
+                              Result = le.Result
+                          }).ToList();
+            return result;
+        }
+
+        /* Wszystkie badania danego labworkera */
+        [HttpGet("laboratory/alldone")]
+        [Authorize(Roles = "LABM")]
+        public List<Generic> LaboratoryAllDone()
+        {
+            using var db = new DatabaseContext();
+            var result = (from le in db.LaboratoryExaminations
+                          join ed in db.ExaminationsDictionary
+                          on le.ExaminationDictionaryId equals ed.ExaminationDictionaryId
+                          where le.Status != "Ordered" && le.Status != "Executed"
+                          select new Generic
+                          {
+                              Id = le.LaboratoryExaminationId,
+                              LaboratoryExaminationName = ed.Name,
+                              DoctorComment = le.DoctorComment,
+                              OrderDate = le.OrderDate,
+                              Status = le.Status,
+                              ExaminationDate = le.ExaminationDate,
+                              Result = le.Result
                           }).ToList();
             return result;
         }

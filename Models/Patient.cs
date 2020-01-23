@@ -34,6 +34,7 @@ namespace BackendProject.Models
         public string DoctorName { get; set; }
         public string DoctorLastName { get; set; }
         public DateTime OrderExaminationDate { get; set; }
+        public string Status { get; set; }
         public DateTime? ExecuteExaminationDate { get; set; }
     }
 }

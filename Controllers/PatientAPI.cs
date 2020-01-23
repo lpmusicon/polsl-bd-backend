@@ -125,7 +125,8 @@ namespace BackendProject.Controllers
                     DoctorName = d.Name,
                     DoctorLastName = d.Lastname,
                     OrderExaminationDate = le.OrderDate,
-                    ExecuteExaminationDate = le.ExaminationDate
+                    ExecuteExaminationDate = le.ExaminationDate,
+                    Status = le.Status
                 }).ToList();
 
             return result;
