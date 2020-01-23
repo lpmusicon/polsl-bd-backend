@@ -13,8 +13,16 @@ namespace BackendProject.Models
         public int PatientVisitId { get; set; }
         public PatientModel Patient { get; set; }
         public DateTime RegisterDate { get; set; }
-
     };
+
+    public class GenericVisitModel : VisitModel
+    {
+        public string Diagnosis { get; set; }
+        public string Description { get; set; }
+        public DateTime? CloseDate { get; set; }
+        public string Status { get; set; }
+        public DoctorModel Doctor { get; set; }
+    }
 
     public class AllPatientsVisitsModel : VisitModel
     {

@@ -132,6 +132,42 @@ namespace BackendProject.Controllers
             }
             return BadRequest();
         }
+
+        /*
+            Zbiera wizyty stare wizyty
+        */
+        [HttpGet("past")]
+        [Authorize(Roles = "RECP")]
+        public List<GenericVisitModel> PastVisits()
+        {
+
+            using var db = new DatabaseContext();
+            var result = (from p in db.Patients
+                          join pv in db.PatientVisits on p.PatientId equals pv.PatientId
+                          join d in db.Doctors on pv.DoctorId equals d.DoctorId
+                          where pv.Status != "Registered"
+                          select new GenericVisitModel
+                          {
+                              PatientVisitId = pv.PatientVisitId,
+                              Patient = new PatientModel() {
+                                  PatientId = p.PatientId,
+                                  Name = p.Name,
+                                  Lastname = p.Lastname
+                              },
+                              RegisterDate = pv.RegisterDate,
+                              Diagnosis = pv.Diagnosis,
+                              Description = pv.Description,
+                              CloseDate = pv.CloseDate,
+                              Status = pv.Status,
+                              Doctor = new DoctorModel() {
+                                  DoctorId = pv.DoctorId,
+                                  Name = d.Name,
+                                  Lastname = d.Lastname
+                              }
+                          }).ToList();
+            
+            return result;
+        }
         
         /* 
         {
