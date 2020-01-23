@@ -50,7 +50,7 @@ namespace BackendProject.Controllers
 
         [HttpGet("{patientId}/visit")]
         [HttpGet("{patientId}/visit/all")]
-        [Authorize(Roles = "RECP, DOCT")]
+        [Authorize(Roles = "DOCT")]
         public List<PatientVisitsModel> Visits(int patientId)
         {
             using var db = new DatabaseContext();
@@ -58,7 +58,7 @@ namespace BackendProject.Controllers
                 from p in db.Patients
                 join pv in db.PatientVisits on p.PatientId equals pv.PatientId
                 join d in db.Doctors on pv.DoctorId equals d.DoctorId
-                where pv.PatientId == patientId
+                where pv.PatientId == patientId && pv.Status != "Registered"
                 select new PatientVisitsModel
                 {
                     Patient = new PatientModel() {
